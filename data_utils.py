@@ -67,25 +67,16 @@ def download_mvtec_ad(root: Union[str, Path], category: Optional[str] = None) ->
         
         urllib.request.urlretrieve(MVTEC_URL, tar_path, reporthook=report_progress)
         print("\nDownload complete!")
-        
-        # Extract
+
+        # Extract directly into the target root directory
         print(f"Extracting to {root}...")
         with tarfile.open(tar_path, "r:xz") as tar:
-            tar.extractall(path=root.parent)
-        
-        # The archive extracts to 'mvtec_anomaly_detection' folder
-        extracted_path = root.parent / "mvtec_anomaly_detection"
-        if extracted_path.exists() and extracted_path != root:
-            # Rename to match expected root path
-            if root.exists():
-                import shutil
-                shutil.rmtree(root)
-            extracted_path.rename(root)
+            tar.extractall(path=root)
         
         # Clean up tar file
         if tar_path.exists():
             tar_path.unlink()
-        
+
         print(f"MVTec AD dataset ready at {root}")
         return root
         
