@@ -1,7 +1,8 @@
 """Results storage and CSV export."""
 
 import csv
-from dataclasses import dataclass, asdict
+from pathlib import Path
+from dataclasses import dataclass, asdict, fields
 from typing import List, Optional, Dict, Any
 from metrics_utils import format_time, format_memory
 
@@ -9,8 +10,8 @@ from metrics_utils import format_time, format_memory
 @dataclass
 class BenchmarkResult:
     """Container for a single benchmark result."""
-    category: str
-    model: str
+    category: str = ""
+    model: str = ""
     image_AUROC: Optional[float] = None
     pixel_AUROC: Optional[float] = None
     F1_Score: Optional[float] = None
@@ -90,10 +91,19 @@ class ResultsCollector:
         print(f"  Average Peak GPU Memory: {format_memory(avg.peak_gpu_memory_mb)}")
         print(f"  Average Peak CPU Memory: {format_memory(avg.peak_cpu_memory_mb)}")
     
-    def save_csv(self, filepath: str):
-        """Save results to CSV file."""
-        # Add averages to results for CSV
-        all_results = self.results + [self.compute_averages()]
+    def save_csv(self, filepath: str, append: bool = False):
+        """Save results to CSV file.
+        
+        Args:
+            filepath: Path to output CSV file
+            append: If True, append to existing file instead of overwriting
+        """
+        path = Path(filepath)
+        file_exists = path.exists()
+        mode = 'a' if append and file_exists else 'w'
+        
+        # Add averages to results for CSV (only when not appending)
+        all_results = self.results if append else self.results + [self.compute_averages()]
         
         fieldnames = [
             "category", "model", "image_AUROC", "pixel_AUROC", "F1_Score",
@@ -101,10 +111,14 @@ class ResultsCollector:
             "peak_gpu_memory_mb", "peak_cpu_memory_mb", "num_test_images"
         ]
         
-        with open(filepath, "w", newline="") as f:
+        with open(path, mode, newline="") as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
+            
+            # Write header only if not appending or file doesn't exist
+            if not append or not file_exists:
+                writer.writeheader()
+            
             for result in all_results:
                 writer.writerow(asdict(result))
         
-        print(f"\nResults saved to: {filepath}")
+        print(f"\nResults {'appended to' if append and file_exists else 'saved to'}: {filepath}")
