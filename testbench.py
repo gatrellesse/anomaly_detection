@@ -94,6 +94,12 @@ Examples:
         help="Append results to existing CSV instead of overwriting"
     )
     
+    parser.add_argument(
+        "--cpu",
+        action="store_true",
+        help="Force CPU-only mode (useful for CUDA compatibility issues)"
+    )
+    
     return parser.parse_args()
 
 
@@ -149,7 +155,8 @@ def run_single_benchmark(
     datamodule,
     test_loader,
     num_test_images: int,
-    tracker: PerformanceTracker
+    tracker: PerformanceTracker,
+    accelerator: str = "auto"
 ) -> BenchmarkResult:
     """Run a single model benchmark.
     
@@ -159,6 +166,7 @@ def run_single_benchmark(
         test_loader: DataLoader for testing
         num_test_images: Number of test images
         tracker: Performance tracker instance
+        accelerator: Device accelerator ('auto', 'cpu', 'gpu')
         
     Returns:
         BenchmarkResult containing all metrics
@@ -169,7 +177,7 @@ def run_single_benchmark(
     tracker.reset()
     
     # Create fresh engine and model for each run
-    engine = Engine(default_root_dir="./results")
+    engine = Engine(default_root_dir="./results", accelerator=accelerator)
     model = get_model(model_name)
     
     # Train model with timing
@@ -231,7 +239,8 @@ def run_testbench(
     models: list,
     num_images: int,
     output_file: str,
-    append: bool = False
+    append: bool = False,
+    accelerator: str = "auto"
 ):
     """Run the testbench with specified categories and models.
     
@@ -241,6 +250,7 @@ def run_testbench(
         num_images: Number of test images (None for all)
         output_file: Path to output CSV file
         append: Whether to append to existing CSV
+        accelerator: Device accelerator ('auto', 'cpu', 'gpu')
     """
     results_collector = ResultsCollector()
     tracker = PerformanceTracker()
@@ -253,6 +263,7 @@ def run_testbench(
     print(f"Test images per category: {num_images or 'ALL'}")
     print(f"Output file: {output_file}")
     print(f"Mode: {'Append' if append else 'Overwrite'}")
+    print(f"Accelerator: {accelerator}")
     print("=" * 80)
     
     for category in categories:
@@ -291,7 +302,8 @@ def run_testbench(
                     datamodule=datamodule,
                     test_loader=test_loader,
                     num_test_images=actual_num_images,
-                    tracker=tracker
+                    tracker=tracker,
+                    accelerator=accelerator
                 )
                 result.category = category
                 results_collector.add_result(result)
@@ -325,13 +337,17 @@ def main():
     categories = args.category if args.category else CATEGORIES
     models = args.model if args.model else MODEL_NAMES
     
+    # Determine accelerator
+    accelerator = "cpu" if args.cpu else "auto"
+    
     # Run testbench
     run_testbench(
         categories=categories,
         models=models,
         num_images=args.num_images,
         output_file=args.output,
-        append=args.append
+        append=args.append,
+        accelerator=accelerator
     )
 
 
