@@ -1,2 +1,6 @@
 venv/
 MVTecAD/
+.venv/
+__pycache__/
+*.pyc
+*.tar.xz
