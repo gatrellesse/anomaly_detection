@@ -11,8 +11,10 @@ tracking performance metrics including:
 
 import os
 import sys
+import gc
 import shutil
 import traceback
+import torch
 from anomalib.engine import Engine
 
 from config import (
@@ -49,6 +51,15 @@ def patch_windows_symlink():
         print("Windows detected: patched symlink to use copy fallback")
 
 
+def cleanup_gpu():
+    """Clean up GPU memory between runs to prevent CUDA errors."""
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+        torch.cuda.empty_cache()
+        torch.cuda.reset_peak_memory_stats()
+
+
 def run_single_benchmark(
     model_name: str,
     datamodule,
@@ -68,6 +79,9 @@ def run_single_benchmark(
     Returns:
         BenchmarkResult containing all metrics
     """
+    # Clean up GPU memory before starting
+    cleanup_gpu()
+    
     tracker.reset()
     
     # Create fresh engine and model for each run
@@ -105,7 +119,8 @@ def run_single_benchmark(
     print(f"    Peak GPU Memory: {format_memory(perf_metrics.peak_gpu_memory_mb)}")
     print(f"    Peak CPU Memory: {format_memory(perf_metrics.peak_cpu_memory_mb)}")
     
-    return BenchmarkResult(
+    # Build result before cleanup
+    result = BenchmarkResult(
         category="",  # Will be set by caller
         model=model_name,
         image_AUROC=model_metrics['image_auroc'],
@@ -118,6 +133,13 @@ def run_single_benchmark(
         peak_cpu_memory_mb=perf_metrics.peak_cpu_memory_mb,
         num_test_images=num_test_images,
     )
+    
+    # Clean up model and engine to free GPU memory
+    del model
+    del engine
+    cleanup_gpu()
+    
+    return result
 
 
 def run_testbench():
