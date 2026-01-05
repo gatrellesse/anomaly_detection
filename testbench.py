@@ -9,6 +9,9 @@ tracking performance metrics including:
 - GPU and CPU memory utilization
 """
 
+import os
+import sys
+import shutil
 import traceback
 from anomalib.engine import Engine
 
@@ -23,6 +26,27 @@ from metrics_utils import (
     format_time, format_memory
 )
 from results import BenchmarkResult, ResultsCollector
+
+
+def patch_windows_symlink():
+    """Patch os.symlink on Windows to copy directory instead of creating symlink."""
+    if sys.platform == "win32":
+        original_symlink = os.symlink
+        
+        def symlink_or_copy(src, dst, target_is_directory=False):
+            try:
+                original_symlink(src, dst, target_is_directory=target_is_directory)
+            except OSError:
+                # Symlink failed (no privileges), use copy instead
+                if target_is_directory:
+                    if os.path.exists(dst):
+                        shutil.rmtree(dst)
+                    shutil.copytree(src, dst)
+                else:
+                    shutil.copy2(src, dst)
+        
+        os.symlink = symlink_or_copy
+        print("Windows detected: patched symlink to use copy fallback")
 
 
 def run_single_benchmark(
@@ -47,7 +71,7 @@ def run_single_benchmark(
     tracker.reset()
     
     # Create fresh engine and model for each run
-    engine = Engine()
+    engine = Engine(default_root_dir="./results")
     model = get_model(model_name)
     
     # Train model with timing
@@ -164,4 +188,5 @@ def run_testbench():
 
 
 if __name__ == "__main__":
+    patch_windows_symlink()
     run_testbench()
