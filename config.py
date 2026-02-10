@@ -14,8 +14,14 @@ CATEGORIES = [
 
 # Models to benchmark
 MODEL_NAMES = [
+    # CNN methods
     "patchcore",
     "padim",
+    "fastflow",
+    # Transformer methods
+    "dinomaly",
+    "vlmad",
+    "winclip",
 ]
 
 # Test configuration
