@@ -14,6 +14,37 @@ import torch
 from types import SimpleNamespace
 
 
+class CustomDatamoduleWrapper(MVTecAD):
+    """Wrapper for MVTecAD that properly overrides dataloaders."""
+    
+    def __init__(self, datamodule, train_dataloader_func, val_dataloader_func, test_dataloader_func):
+        """Initialize wrapper with custom dataloader functions.
+        
+        Args:
+            datamodule: Original MVTecAD datamodule instance
+            train_dataloader_func: Function that returns train DataLoader
+            val_dataloader_func: Function that returns val DataLoader
+            test_dataloader_func: Function that returns test DataLoader
+        """
+        # Copy all attributes from original datamodule
+        self.__dict__.update(datamodule.__dict__)
+        self._train_dataloader_func = train_dataloader_func
+        self._val_dataloader_func = val_dataloader_func
+        self._test_dataloader_func = test_dataloader_func
+    
+    def train_dataloader(self):
+        """Return custom train dataloader."""
+        return self._train_dataloader_func()
+    
+    def val_dataloader(self):
+        """Return custom val dataloader."""
+        return self._val_dataloader_func()
+    
+    def test_dataloader(self):
+        """Return custom test dataloader."""
+        return self._test_dataloader_func()
+
+
 class BatchDict(dict):
     """Dict subclass that also supports attribute access."""
     def __getattr__(self, key):
@@ -218,7 +249,10 @@ def load_mvtec_category(
         eval_batch_size=eval_batch_size,
     )
     
-    # Assign training data if found and override train_dataloader
+    # Skip setup() entirely since it breaks things - we have all data loaded manually
+    # Don't call datamodule.setup()
+    
+    # Create custom train/val dataloaders
     if num_train_images > 0:
         train_dataset = SimpleImageDataset(train_images)
         datamodule.train_data = train_dataset
@@ -226,27 +260,23 @@ def load_mvtec_category(
         # Empty validation set
         datamodule.val_data = Subset(train_dataset, [])
         datamodule.val_dataset = Subset(train_dataset, [])
-        
-        # Override train_dataloader to use our captured dataset (not datamodule.train_data which may get cleared)
-        def custom_train_dataloader(captured_dataset=train_dataset, batch_size=train_batch_size):
+    else:
+        train_dataset = None
+    
+    def custom_train_dataloader():
+        if train_dataset is not None:
             return DataLoader(
-                captured_dataset,
-                batch_size=batch_size,
+                train_dataset,
+                batch_size=train_batch_size,
                 shuffle=True,
                 num_workers=0,
-                collate_fn=captured_dataset.collate_fn,
+                collate_fn=train_dataset.collate_fn,
             )
-        
-        datamodule.train_dataloader = custom_train_dataloader
-        
-        # Also override val_dataloader to return empty
-        def custom_val_dataloader():
-            return DataLoader([], batch_size=eval_batch_size)
-        
-        datamodule.val_dataloader = custom_val_dataloader
+        else:
+            return DataLoader([], batch_size=train_batch_size)
     
-    # Skip setup() entirely since it breaks things - we have all data loaded manually
-    # Don't call datamodule.setup()
+    def custom_val_dataloader():
+        return DataLoader([], batch_size=eval_batch_size)
     
     # Manually load test images from test directory
     test_images = []
@@ -280,15 +310,21 @@ def load_mvtec_category(
     )
     
     # Override test_dataloader to use our dataset instead of the broken datamodule one
-    def custom_test_dataloader(captured_dataset=test_dataset, batch_size=eval_batch_size):
+    def custom_test_dataloader():
         return DataLoader(
-            captured_dataset,
-            batch_size=batch_size,
+            test_dataset,
+            batch_size=eval_batch_size,
             shuffle=False,
             num_workers=0,
-            collate_fn=captured_dataset.collate_fn,
+            collate_fn=test_dataset.collate_fn,
         )
     
-    datamodule.test_dataloader = custom_test_dataloader
+    # Wrap the datamodule with custom dataloader methods using the wrapper class
+    wrapped_datamodule = CustomDatamoduleWrapper(
+        datamodule,
+        custom_train_dataloader,
+        custom_val_dataloader,
+        custom_test_dataloader
+    )
     
-    return datamodule, test_loader, num_test_images
+    return wrapped_datamodule, test_loader, num_test_images
