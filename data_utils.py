@@ -279,4 +279,16 @@ def load_mvtec_category(
         collate_fn=test_dataset.collate_fn,
     )
     
+    # Override test_dataloader to use our dataset instead of the broken datamodule one
+    def custom_test_dataloader(captured_dataset=test_dataset, batch_size=eval_batch_size):
+        return DataLoader(
+            captured_dataset,
+            batch_size=batch_size,
+            shuffle=False,
+            num_workers=0,
+            collate_fn=captured_dataset.collate_fn,
+        )
+    
+    datamodule.test_dataloader = custom_test_dataloader
+    
     return datamodule, test_loader, num_test_images
