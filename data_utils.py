@@ -13,6 +13,19 @@ from typing import Optional, Tuple, Union, List
 import torch
 from types import SimpleNamespace
 
+
+class BatchDict(dict):
+    """Dict subclass that also supports attribute access."""
+    def __getattr__(self, key):
+        try:
+            return self[key]
+        except KeyError:
+            raise AttributeError(f"No attribute '{key}'")
+    
+    def __setattr__(self, key, value):
+        self[key] = value
+
+
 # MVTec AD dataset URL
 MVTEC_URL = "https://www.mydrive.ch/shares/38536/3830184030e49fe74747669442f0f283/download/420938113-1629960298/mvtec_anomaly_detection.tar.xz"
 
@@ -30,17 +43,17 @@ class SimpleImageDataset(Dataset):
         self.collate_fn = self._collate_fn
     
     def _collate_fn(self, batch):
-        """Custom collate function that converts dicts to objects with attributes."""
+        """Custom collate function that converts dicts to batch objects with attributes."""
         # batch is a list of dicts from __getitem__
-        # Convert to objects with .image and .gt_mask attributes
         stacked_images = torch.stack([item["image"] for item in batch])
         
         # Move to GPU if available
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         stacked_images = stacked_images.to(device)
         
-        # Create a batch object with required attributes
-        batch_obj = SimpleNamespace(
+        # Create a batch dict that supports both dict methods (.update()) 
+        # and attribute access (.image, .gt_mask)
+        batch_obj = BatchDict(
             image=stacked_images,
             gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
         )
