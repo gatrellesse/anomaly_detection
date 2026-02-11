@@ -51,11 +51,15 @@ class SimpleImageDataset(Dataset):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         stacked_images = stacked_images.to(device)
         
+        # Collect image paths for the batch
+        image_paths = [item["image_path"] for item in batch]
+        
         # Create a batch dict that supports both dict methods (.update()) 
-        # and attribute access (.image, .gt_mask)
+        # and attribute access (.image, .gt_mask, .image_path)
         batch_obj = BatchDict(
             image=stacked_images,
             gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
+            image_path=image_paths,
         )
         return batch_obj
     
