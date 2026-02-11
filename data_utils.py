@@ -35,10 +35,14 @@ class SimpleImageDataset(Dataset):
         # Convert to objects with .image and .gt_mask attributes
         stacked_images = torch.stack([item["image"] for item in batch])
         
+        # Move to GPU if available
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        stacked_images = stacked_images.to(device)
+        
         # Create a batch object with required attributes
         batch_obj = SimpleNamespace(
             image=stacked_images,
-            gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1]),  # Dummy mask
+            gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
         )
         return batch_obj
     
