@@ -35,9 +35,14 @@ class SimpleImageDataset(Dataset):
     
     def __init__(self, image_files: List[Path], transform=None):
         self.image_files = image_files
+        # Use ImageNet normalization as expected by anomalib models
         self.transform = transform or transforms.Compose([
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225]
+            ),
         ])
         # Add collate_fn attribute for anomalib compatibility
         self.collate_fn = self._collate_fn
