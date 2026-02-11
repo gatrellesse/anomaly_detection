@@ -27,7 +27,8 @@ from anomalib.engine import Engine
 
 from config import (
     MVTEC_PATH, CATEGORIES, MODEL_NAMES,
-    LIMIT_TEST_IMAGES, BATCH_SIZE_TRAIN, BATCH_SIZE_EVAL, CSV_OUTPUT
+    LIMIT_TEST_IMAGES, BATCH_SIZE_TRAIN, BATCH_SIZE_EVAL, CSV_OUTPUT,
+    MODEL_BATCH_SIZES
 )
 from models import get_model
 from data_utils import load_mvtec_category
@@ -177,12 +178,18 @@ def run_single_benchmark(
     tracker.reset()
     
     # Create fresh engine and model for each run
-    engine = Engine(default_root_dir="./results", accelerator=accelerator)
+    engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2)
     model = get_model(model_name)
     
     # Train model with timing
     print(f"  Training {model_name}...")
     tracker.start_training()
+    
+    # Handle models that don't require validation during training
+    if model_name.lower() in ['vlmad', 'winclip']:
+        # These models are zero-shot and don't need validation
+        engine.trainer.limit_val_batches = 0
+    
     engine.fit(model, datamodule)
     tracker.end_training()
     
@@ -271,32 +278,28 @@ def run_testbench(
         print(f"CATEGORY: {category}")
         print(f"{'=' * 40}")
         
-        try:
-            # Load dataset
-            datamodule, test_loader, actual_num_images = load_mvtec_category(
-                root=MVTEC_PATH,
-                category=category,
-                train_batch_size=BATCH_SIZE_TRAIN,
-                eval_batch_size=BATCH_SIZE_EVAL,
-                limit_test_images=num_images
-            )
-            print(f"Loaded {actual_num_images} test images")
-            
-        except Exception as e:
-            print(f"Error loading dataset for {category}: {e}")
-            traceback.print_exc()
-            # Add error results for all models
-            for model_name in models:
-                results_collector.add_result(BenchmarkResult(
-                    category=category,
-                    model=model_name,
-                ))
-            continue
-        
         for model_name in models:
             print(f"\n--- Model: {model_name} ---")
             
             try:
+                # Get model-specific batch sizes
+                model_config = MODEL_BATCH_SIZES.get(model_name.lower(), {})
+                train_batch = model_config.get("train", BATCH_SIZE_TRAIN)
+                eval_batch = model_config.get("eval", BATCH_SIZE_EVAL)
+                
+                if model_config:
+                    print(f"  Using model-specific batch sizes: train={train_batch}, eval={eval_batch}")
+                
+                # Load dataset with model-specific batch sizes
+                datamodule, test_loader, actual_num_images = load_mvtec_category(
+                    root=MVTEC_PATH,
+                    category=category,
+                    train_batch_size=train_batch,
+                    eval_batch_size=eval_batch,
+                    limit_test_images=num_images
+                )
+                print(f"  Loaded {actual_num_images} test images")
+                
                 result = run_single_benchmark(
                     model_name=model_name,
                     datamodule=datamodule,
@@ -307,6 +310,11 @@ def run_testbench(
                 )
                 result.category = category
                 results_collector.add_result(result)
+                
+                # Clean up datamodule after each model
+                del datamodule
+                del test_loader
+                cleanup_gpu()
                 
             except Exception as e:
                 print(f"Error running {model_name} on {category}: {e}")
