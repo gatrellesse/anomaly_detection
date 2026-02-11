@@ -4,6 +4,7 @@ import os
 import tarfile
 import urllib.request
 from pathlib import Path
+from types import MethodType, SimpleNamespace
 
 from anomalib.data import MVTecAD
 from torch.utils.data import Subset, DataLoader, Dataset
@@ -11,50 +12,27 @@ from torchvision import transforms
 from PIL import Image
 from typing import Optional, Tuple, Union, List
 import torch
-from types import SimpleNamespace
-
-
-class CustomDatamoduleWrapper(MVTecAD):
-    """Wrapper for MVTecAD that properly overrides dataloaders."""
-    
-    def __init__(self, datamodule, train_dataloader_func, val_dataloader_func, test_dataloader_func):
-        """Initialize wrapper with custom dataloader functions.
-        
-        Args:
-            datamodule: Original MVTecAD datamodule instance
-            train_dataloader_func: Function that returns train DataLoader
-            val_dataloader_func: Function that returns val DataLoader
-            test_dataloader_func: Function that returns test DataLoader
-        """
-        # Copy all attributes from original datamodule
-        self.__dict__.update(datamodule.__dict__)
-        self._train_dataloader_func = train_dataloader_func
-        self._val_dataloader_func = val_dataloader_func
-        self._test_dataloader_func = test_dataloader_func
-    
-    def train_dataloader(self):
-        """Return custom train dataloader."""
-        return self._train_dataloader_func()
-    
-    def val_dataloader(self):
-        """Return custom val dataloader."""
-        return self._val_dataloader_func()
-    
-    def test_dataloader(self):
-        """Return custom test dataloader."""
-        return self._test_dataloader_func()
 
 
 class BatchDict(dict):
     """Dict subclass that also supports attribute access."""
     def __getattr__(self, key):
+        if key.startswith('_'):
+            # Avoid issues with private attributes
+            return object.__getattribute__(self, key)
         try:
             return self[key]
         except KeyError:
             raise AttributeError(f"No attribute '{key}'")
     
     def __setattr__(self, key, value):
-        self[key] = value
+        if key.startswith('_'):
+            object.__setattr__(self, key, value)
+        else:
+            self[key] = value
+    
+    def __repr__(self):
+        return f"BatchDict({dict.__repr__(self)})"
 
 
 # MVTec AD dataset URL
@@ -81,6 +59,9 @@ class SimpleImageDataset(Dataset):
     def _collate_fn(self, batch):
         """Custom collate function that converts dicts to batch objects with attributes."""
         # batch is a list of dicts from __getitem__
+        if not batch:
+            raise ValueError("Empty batch received in collate function")
+            
         stacked_images = torch.stack([item["image"] for item in batch])
         
         # Move to GPU if available
@@ -89,18 +70,26 @@ class SimpleImageDataset(Dataset):
         
         # Collect image paths for the batch
         image_paths = [item["image_path"] for item in batch]
+        batch_size = len(batch)
+        img_height, img_width = stacked_images.shape[-2], stacked_images.shape[-1]
         
         # Create a batch dict that supports both dict methods (.update()) 
         # and attribute access (.image, .gt_mask, .image_path, .label, .anomaly_map)
-        batch_obj = BatchDict(
+        batch_dict = BatchDict(
             image=stacked_images,
-            gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
+            gt_mask=torch.zeros(batch_size, 1, img_height, img_width, device=device),
             image_path=image_paths,
-            label=torch.zeros(len(batch), dtype=torch.long, device=device),  # Normal samples are labeled 0
-            mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
+            label=torch.zeros(batch_size, dtype=torch.long, device=device),  # Normal samples are labeled 0
+            mask=torch.zeros(batch_size, 1, img_height, img_width, device=device),
             anomaly_map=None,  # Will be populated by model.test_step()
         )
-        return batch_obj
+        
+        # Ensure batch_dict is not None and has all required fields
+        assert batch_dict is not None, "batch_dict should not be None"
+        assert 'image' in batch_dict, "batch_dict missing 'image' field"
+        assert 'anomaly_map' in batch_dict, "batch_dict missing 'anomaly_map' field"
+        
+        return batch_dict
     
     def __len__(self):
         return len(self.image_files)
@@ -309,22 +298,25 @@ def load_mvtec_category(
         collate_fn=test_dataset.collate_fn,
     )
     
-    # Override test_dataloader to use our dataset instead of the broken datamodule one
+    # Override test_dataloader - we won't be using this but assign anyway for completeness
+    # Engine will use the test_loader we pass explicitly instead
     def custom_test_dataloader():
-        return DataLoader(
-            test_dataset,
-            batch_size=eval_batch_size,
-            shuffle=False,
-            num_workers=0,
-            collate_fn=test_dataset.collate_fn,
-        )
+        return test_loader
     
-    # Wrap the datamodule with custom dataloader methods using the wrapper class
-    wrapped_datamodule = CustomDatamoduleWrapper(
-        datamodule,
-        custom_train_dataloader,
-        custom_val_dataloader,
-        custom_test_dataloader
-    )
+    # Create proper bound methods that don't require self
+    # We'll create simple wrapper methods that look like they belong to the class
+    def train_dataloader_wrapper(self):
+        return custom_train_dataloader()
     
-    return wrapped_datamodule, test_loader, num_test_images
+    def val_dataloader_wrapper(self):
+        return custom_val_dataloader()
+    
+    def test_dataloader_wrapper(self):
+        return custom_test_dataloader()
+    
+    # Bind these as methods of the datamodule instance
+    datamodule.train_dataloader = MethodType(train_dataloader_wrapper, datamodule)
+    datamodule.val_dataloader = MethodType(val_dataloader_wrapper, datamodule)
+    datamodule.test_dataloader = MethodType(test_dataloader_wrapper, datamodule)
+    
+    return datamodule, test_loader, num_test_images
