@@ -191,7 +191,7 @@ def run_single_benchmark(
     # Evaluate on test set with timing
     print(f"  Testing {model_name} on {num_test_images} images...")
     tracker.start_inference()
-    # Pass datamodule instead of test_loader so engine uses our custom test_dataloader() method
+    # Use datamodule for testing - it has the properly configured test_dataloader
     raw_metrics = engine.test(model, datamodule=datamodule)
     tracker.end_inference(num_test_images)
     

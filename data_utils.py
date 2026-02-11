@@ -4,7 +4,7 @@ import os
 import tarfile
 import urllib.request
 from pathlib import Path
-from types import MethodType, SimpleNamespace
+from types import MethodType
 
 from anomalib.data import MVTecAD
 from torch.utils.data import Subset, DataLoader, Dataset
@@ -81,7 +81,7 @@ class SimpleImageDataset(Dataset):
             image_path=image_paths,
             label=torch.zeros(batch_size, dtype=torch.long, device=device),  # Normal samples are labeled 0
             mask=torch.zeros(batch_size, 1, img_height, img_width, device=device),
-            anomaly_map=None,  # Will be populated by model.test_step()
+            anomaly_map=torch.zeros(batch_size, 1, img_height, img_width, device=device),  # Initialize as tensor
         )
         
         # Ensure batch_dict is not None and has all required fields
@@ -218,8 +218,15 @@ def load_mvtec_category(
     
     print(f"\n  Loading {category}...")
     
-    # Manually load training images from train/good directory BEFORE creating datamodule
-    # (The datamodule's training set is broken in anomalib 2.2.0)
+    # Create MVTecAD datamodule (we'll override its dataloaders)
+    datamodule = MVTecAD(
+        root=str(root),
+        category=category,
+        train_batch_size=train_batch_size,
+        eval_batch_size=eval_batch_size,
+    )
+    
+    # Manually load training images from train/good directory
     train_images = []
     if train_path.exists():
         train_good = train_path / "good"
@@ -230,44 +237,7 @@ def load_mvtec_category(
     num_train_images = len(train_images)
     print(f"    Found {num_train_images} training images")
     
-    # Create MVTecAD datamodule 
-    datamodule = MVTecAD(
-        root=str(root),
-        category=category,
-        train_batch_size=train_batch_size,
-        eval_batch_size=eval_batch_size,
-    )
-    
-    # Skip setup() entirely since it breaks things - we have all data loaded manually
-    # Don't call datamodule.setup()
-    
-    # Create custom train/val dataloaders
-    if num_train_images > 0:
-        train_dataset = SimpleImageDataset(train_images)
-        datamodule.train_data = train_dataset
-        datamodule.train_dataset = train_dataset
-        # Empty validation set
-        datamodule.val_data = Subset(train_dataset, [])
-        datamodule.val_dataset = Subset(train_dataset, [])
-    else:
-        train_dataset = None
-    
-    def custom_train_dataloader():
-        if train_dataset is not None:
-            return DataLoader(
-                train_dataset,
-                batch_size=train_batch_size,
-                shuffle=True,
-                num_workers=0,
-                collate_fn=train_dataset.collate_fn,
-            )
-        else:
-            return DataLoader([], batch_size=train_batch_size)
-    
-    def custom_val_dataloader():
-        return DataLoader([], batch_size=eval_batch_size)
-    
-    # Manually load test images from test directory
+    # Manually load test images
     test_images = []
     if test_path.exists():
         for subdir in sorted(test_path.iterdir()):
@@ -282,14 +252,50 @@ def load_mvtec_category(
         print(f"  Warning: No test images found for {category}")
         return datamodule, DataLoader([], batch_size=eval_batch_size), 0
     
-    # Apply limit if requested
+    # Apply test image limit if requested
     if limit_test_images is not None and limit_test_images > 0:
         test_images = test_images[:limit_test_images]
         num_test_images = len(test_images)
         print(f"    Limited to {num_test_images} test images")
     
-    # Create simple test dataset
+    # Create datasets for all splits
+    if num_train_images > 0:
+        train_dataset = SimpleImageDataset(train_images)
+    else:
+        train_dataset = SimpleImageDataset([])
+    
+    # Use all training images for validation too if train has images
+    # (Avoid train/val split issues)
+    val_dataset = Subset(train_dataset, list(range(max(0, min(2, len(train_images))))))
+    if len(val_dataset) == 0:
+        val_dataset = SimpleImageDataset([])
+    
     test_dataset = SimpleImageDataset(test_images)
+    
+    # Create dataloaders
+    def make_train_dataloader():
+        return DataLoader(
+            train_dataset,
+            batch_size=train_batch_size,
+            shuffle=True,
+            num_workers=0,
+            collate_fn=train_dataset.collate_fn if hasattr(train_dataset, 'collate_fn') else None,
+        )
+    
+    def make_val_dataloader():
+        return DataLoader(
+            val_dataset if len(val_dataset) > 0 else SimpleImageDataset([]),
+            batch_size=eval_batch_size,
+            shuffle=False,
+            num_workers=0,
+            collate_fn=train_dataset.collate_fn if hasattr(train_dataset, 'collate_fn') else None,
+        )
+    
+    # Bind these methods to the datamodule
+    datamodule.train_dataloader = MethodType(lambda self: make_train_dataloader(), datamodule)
+    datamodule.val_dataloader = MethodType(lambda self: make_val_dataloader(), datamodule)
+    
+    # Create test dataloader
     test_loader = DataLoader(
         test_dataset,
         batch_size=eval_batch_size,
@@ -297,26 +303,5 @@ def load_mvtec_category(
         num_workers=0,
         collate_fn=test_dataset.collate_fn,
     )
-    
-    # Override test_dataloader - we won't be using this but assign anyway for completeness
-    # Engine will use the test_loader we pass explicitly instead
-    def custom_test_dataloader():
-        return test_loader
-    
-    # Create proper bound methods that don't require self
-    # We'll create simple wrapper methods that look like they belong to the class
-    def train_dataloader_wrapper(self):
-        return custom_train_dataloader()
-    
-    def val_dataloader_wrapper(self):
-        return custom_val_dataloader()
-    
-    def test_dataloader_wrapper(self):
-        return custom_test_dataloader()
-    
-    # Bind these as methods of the datamodule instance
-    datamodule.train_dataloader = MethodType(train_dataloader_wrapper, datamodule)
-    datamodule.val_dataloader = MethodType(val_dataloader_wrapper, datamodule)
-    datamodule.test_dataloader = MethodType(test_dataloader_wrapper, datamodule)
     
     return datamodule, test_loader, num_test_images
