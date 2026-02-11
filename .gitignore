@@ -4,3 +4,5 @@ MVTecAD/
 __pycache__/
 *.pyc
 *.tar.xz
+pre_trained/
+results/

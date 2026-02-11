@@ -6,8 +6,56 @@ import urllib.request
 from pathlib import Path
 
 from anomalib.data import MVTecAD
-from torch.utils.data import Subset, DataLoader
-from typing import Optional, Tuple, Union
+from torch.utils.data import Subset, DataLoader, Dataset
+from torchvision import transforms
+from PIL import Image
+from typing import Optional, Tuple, Union, List
+import torch
+from types import SimpleNamespace
+
+# MVTec AD dataset URL
+MVTEC_URL = "https://www.mydrive.ch/shares/38536/3830184030e49fe74747669442f0f283/download/420938113-1629960298/mvtec_anomaly_detection.tar.xz"
+
+
+class SimpleImageDataset(Dataset):
+    """Simple dataset for loading images from a directory structure."""
+    
+    def __init__(self, image_files: List[Path], transform=None):
+        self.image_files = image_files
+        self.transform = transform or transforms.Compose([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+        ])
+        # Add collate_fn attribute for anomalib compatibility
+        self.collate_fn = self._collate_fn
+    
+    def _collate_fn(self, batch):
+        """Custom collate function that converts dicts to objects with attributes."""
+        # batch is a list of dicts from __getitem__
+        # Convert to objects with .image and .gt_mask attributes
+        stacked_images = torch.stack([item["image"] for item in batch])
+        
+        # Create a batch object with required attributes
+        batch_obj = SimpleNamespace(
+            image=stacked_images,
+            gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1]),  # Dummy mask
+        )
+        return batch_obj
+    
+    def __len__(self):
+        return len(self.image_files)
+    
+    def __getitem__(self, idx):
+        img_path = self.image_files[idx]
+        img = Image.open(img_path).convert("RGB")
+        
+        if self.transform:
+            img = self.transform(img)
+        
+        return {
+            "image": img,
+            "image_path": str(img_path),
+        }
 
 # MVTec AD dataset URL
 MVTEC_URL = "https://www.mydrive.ch/shares/38536/3830184030e49fe74747669442f0f283/download/420938113-1629960298/mvtec_anomaly_detection.tar.xz"
@@ -115,7 +163,25 @@ def load_mvtec_category(
     if auto_download:
         root = download_mvtec_ad(root, category)
     
-    # Load dataset
+    category_path = root / category
+    train_path = category_path / "train"
+    test_path = category_path / "test"
+    
+    print(f"\n  Loading {category}...")
+    
+    # Manually load training images from train/good directory BEFORE creating datamodule
+    # (The datamodule's training set is broken in anomalib 2.2.0)
+    train_images = []
+    if train_path.exists():
+        train_good = train_path / "good"
+        if train_good.exists():
+            for ext in ['*.png', '*.jpg', '*.jpeg', '*.bmp']:
+                train_images.extend(sorted(train_good.glob(ext)))
+    
+    num_train_images = len(train_images)
+    print(f"    Found {num_train_images} training images")
+    
+    # Create MVTecAD datamodule 
     datamodule = MVTecAD(
         root=str(root),
         category=category,
@@ -123,30 +189,65 @@ def load_mvtec_category(
         eval_batch_size=eval_batch_size,
     )
     
-    # Setup the datamodule
-    datamodule.setup()
-    
-    # Get the test dataloader
-    test_loader = datamodule.test_dataloader()
-    
-    # If we want to limit test images, create a custom loader
-    if limit_test_images is not None:
-        original_dataset = test_loader.dataset
-        num_images = min(limit_test_images, len(original_dataset))
+    # Assign training data if found and override train_dataloader
+    if num_train_images > 0:
+        train_dataset = SimpleImageDataset(train_images)
+        datamodule.train_data = train_dataset
+        datamodule.train_dataset = train_dataset
+        # Empty validation set
+        datamodule.val_data = Subset(train_dataset, [])
+        datamodule.val_dataset = Subset(train_dataset, [])
         
-        # Create a subset
-        limited_indices = range(num_images)
-        test_dataset = Subset(original_dataset, limited_indices)
+        # Override train_dataloader to use our captured dataset (not datamodule.train_data which may get cleared)
+        def custom_train_dataloader(captured_dataset=train_dataset, batch_size=train_batch_size):
+            return DataLoader(
+                captured_dataset,
+                batch_size=batch_size,
+                shuffle=True,
+                num_workers=0,
+                collate_fn=captured_dataset.collate_fn,
+            )
         
-        # Create new dataloader with limited dataset
-        test_loader = DataLoader(
-            test_dataset,
-            batch_size=test_loader.batch_size,
-            shuffle=False,
-            num_workers=0,  # Set to 0 to avoid multiprocessing issues
-            collate_fn=test_loader.collate_fn  # Preserve anomalib's custom collate function
-        )
+        datamodule.train_dataloader = custom_train_dataloader
         
-        return datamodule, test_loader, num_images
+        # Also override val_dataloader to return empty
+        def custom_val_dataloader():
+            return DataLoader([], batch_size=eval_batch_size)
+        
+        datamodule.val_dataloader = custom_val_dataloader
     
-    return datamodule, test_loader, len(test_loader.dataset)
+    # Skip setup() entirely since it breaks things - we have all data loaded manually
+    # Don't call datamodule.setup()
+    
+    # Manually load test images from test directory
+    test_images = []
+    if test_path.exists():
+        for subdir in sorted(test_path.iterdir()):
+            if subdir.is_dir():
+                for ext in ['*.png', '*.jpg', '*.jpeg', '*.bmp']:
+                    test_images.extend(sorted(subdir.glob(ext)))
+    
+    num_test_images = len(test_images)
+    print(f"    Found {num_test_images} test images")
+    
+    if num_test_images == 0:
+        print(f"  Warning: No test images found for {category}")
+        return datamodule, DataLoader([], batch_size=eval_batch_size), 0
+    
+    # Apply limit if requested
+    if limit_test_images is not None and limit_test_images > 0:
+        test_images = test_images[:limit_test_images]
+        num_test_images = len(test_images)
+        print(f"    Limited to {num_test_images} test images")
+    
+    # Create simple test dataset
+    test_dataset = SimpleImageDataset(test_images)
+    test_loader = DataLoader(
+        test_dataset,
+        batch_size=eval_batch_size,
+        shuffle=False,
+        num_workers=0,
+        collate_fn=test_dataset.collate_fn,
+    )
+    
+    return datamodule, test_loader, num_test_images
