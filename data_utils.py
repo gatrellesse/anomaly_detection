@@ -55,11 +55,14 @@ class SimpleImageDataset(Dataset):
         image_paths = [item["image_path"] for item in batch]
         
         # Create a batch dict that supports both dict methods (.update()) 
-        # and attribute access (.image, .gt_mask, .image_path)
+        # and attribute access (.image, .gt_mask, .image_path, .label, .anomaly_map)
         batch_obj = BatchDict(
             image=stacked_images,
             gt_mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
             image_path=image_paths,
+            label=torch.zeros(len(batch), dtype=torch.long, device=device),  # Normal samples are labeled 0
+            mask=torch.zeros(len(batch), 1, stacked_images.shape[-2], stacked_images.shape[-1], device=device),
+            anomaly_map=None,  # Will be populated by model.test_step()
         )
         return batch_obj
     
