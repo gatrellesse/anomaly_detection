@@ -19,7 +19,7 @@ MODEL_NAMES = [
     # "padim",
     "fastflow",
     # Transformer methods
-    #"dinomaly",
+    "dinomaly",
     "vlmad",
     "winclip",
 ]

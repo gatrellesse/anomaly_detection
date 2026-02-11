@@ -178,18 +178,18 @@ def run_single_benchmark(
     tracker.reset()
     
     # Create fresh engine and model for each run
-    engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2)
+    # Handle models that don't require validation during training
+    if model_name.lower() in ['vlmad', 'winclip']:
+        # These models are zero-shot and don't need validation
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2, limit_val_batches=0)
+    else:
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2)
+    
     model = get_model(model_name)
     
     # Train model with timing
     print(f"  Training {model_name}...")
     tracker.start_training()
-    
-    # Handle models that don't require validation during training
-    if model_name.lower() in ['vlmad', 'winclip']:
-        # These models are zero-shot and don't need validation
-        engine.trainer.limit_val_batches = 0
-    
     engine.fit(model, datamodule)
     tracker.end_training()
     
