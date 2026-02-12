@@ -5,7 +5,7 @@ import torch
 import psutil
 from anomalib.data import Folder
 from anomalib.engine import Engine
-from anomalib.models import Patchcore, Padim, EfficientAd
+from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly
 
 from utils import get_cpu_memory, extract_metric
 
@@ -67,22 +67,12 @@ if __name__ == "__main__":
     os.makedirs("results", exist_ok=True)
 
     MODELS = {
-        "patchcore": Patchcore,
-        "padim": Padim,
-        "efficientad": EfficientAd
+        "dinomaly": {"class": Dinomaly, "batch_size": 32, "epochs": 1},
+        "winclip": {"class": WinClip, "batch_size": 32, "epochs": 0},
+        "patchcore": {"class": Patchcore, "batch_size": 32, "epochs": 1},
+        "padim": {"class": Padim, "batch_size": 32, "epochs": 1},
+        "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 1}
     }
-
-    MAX_EPOCHS = [
-        1,
-        1,
-        10
-    ]
-
-    BATCH_SIZES = [
-        32,
-        32,
-        1
-    ]
     
     rows = []
 
@@ -92,10 +82,15 @@ if __name__ == "__main__":
         "peak_gpu_memory_mb", "peak_cpu_memory_mb"
     ]
 
-    for model_name, model_class, batch_size, max_epochs in zip(MODELS.keys(), MODELS.values(), BATCH_SIZES, MAX_EPOCHS):
+    for model_name, config in MODELS.items():
 
         try:
-            result_data = run_testbench(model_class, batch_size, max_epochs, DATASET_PATH)
+            result_data = run_testbench(
+                    config["class"],
+                    config["batch_size"],
+                    config["epochs"],
+                    DATASET_PATH
+                )
             metrics = result_data["raw_metrics"]
 
             image_auc = extract_metric(metrics, ["image_AUROC", "image/AUROC", "AUROC"])

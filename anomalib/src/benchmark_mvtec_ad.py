@@ -5,9 +5,9 @@ import torch
 import psutil
 from anomalib.data import MVTecAD
 from anomalib.engine import Engine
-from anomalib.models import Patchcore, Padim, EfficientAd
+from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly
 
-import get_cpu_memory, extract_metric from utils.py
+from utils import get_cpu_memory, extract_metric
 
 def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
     # Setup Datamodule
@@ -29,9 +29,14 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
     engine = Engine(max_epochs=max_epochs)
     model = model_class()
 
-    start_train = time.time()
-    engine.fit(model, datamodule)
-    train_time = time.time() - start_train
+    if model_class == WinClip:
+        model = model_class(class_name=category)
+        train_time = 0  # No training for winclip
+    else:
+        model = model_class()
+        start_train = time.time()
+        engine.fit(model, datamodule)
+        train_time = time.time() - start_train
 
     start_inf = time.time()
     metrics = engine.test(model, datamodule)
@@ -68,23 +73,14 @@ if __name__ == "__main__":
         "leather",
         "metal_nut"
         ]
+    
     MODELS = {
-        "patchcore": Patchcore,
-        "padim": Padim,
-        "efficientad": EfficientAd
+        "dinomaly": {"class": Dinomaly, "batch_size": 32, "epochs": 1},
+        "winclip": {"class": WinClip, "batch_size": 32, "epochs": 0},
+        "patchcore": {"class": Patchcore, "batch_size": 32, "epochs": 1},
+        "padim": {"class": Padim, "batch_size": 32, "epochs": 1},
+        "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 1}
     }
-
-    MAX_EPOCHS = [
-        1,
-        1,
-        10
-    ]
-
-    BATCH_SIZES = [
-        32,
-        32,
-        1
-    ]
     
     rows = []
 
@@ -95,11 +91,19 @@ if __name__ == "__main__":
     ]
 
     for category in CATEGORIES:
-        for model_name, model_class, batch_size, max_epochs in zip(MODELS.keys(), MODELS.values(), BATCH_SIZES, MAX_EPOCHS):
+        for model_name, config in MODELS.items():
+            
             print(f"\n>>> Processing: {category} | {model_name}")
 
             try:
-                result_data = run_testbench(category, model_class, batch_size, max_epochs, MVTEC_PATH)
+                result_data = run_testbench(
+                    category,
+                    config["class"],
+                    config["batch_size"],
+                    config["epochs"],
+                    MVTEC_PATH
+                )
+
                 metrics = result_data["raw_metrics"]
 
                 image_auc = extract_metric(metrics, ["image_AUROC", "image/AUROC", "AUROC"])
