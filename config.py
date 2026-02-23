@@ -7,16 +7,27 @@ MVTEC_PATH = Path(__file__).parent / "MVTecAD"
 # Categories to evaluate
 CATEGORIES = [
     "bottle",
-    "capsule",
     "cable",
-    "wood"
+    "capsule",
+    "carpet",
+    "grid",
+    "hazelnut",
+    "leather",
+    "metal_nut",
+    "pill",
+    "screw",
+    "tile",
+    "toothbrush",
+    "transistor",
+    "wood",
+    "zipper"
 ]
 
 # Models to benchmark
 MODEL_NAMES = [
     # CNN methods
     "patchcore",
-    # "padim",
+    "padim",
     "fastflow",
     # Transformer methods
     "dinomaly",
@@ -25,7 +36,7 @@ MODEL_NAMES = [
 ]
 
 # Test configuration
-LIMIT_TEST_IMAGES = 50
+LIMIT_TEST_IMAGES = None
 BATCH_SIZE_TRAIN = 32
 BATCH_SIZE_EVAL = 32
 
