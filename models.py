@@ -1,6 +1,6 @@
 """Model factory and registration."""
 
-from anomalib.models import Patchcore, Padim, Fastflow, Dinomaly, VlmAd, WinClip
+from anomalib.models import Patchcore, Padim, Fastflow, Dinomaly, VlmAd, WinClip, Draem, EfficientAd
 from typing import Dict, Type, Any
 
 
@@ -14,6 +14,8 @@ MODEL_REGISTRY: Dict[str, Type] = {
     "dinomaly": Dinomaly,
     "vlmad": VlmAd,
     "winclip": WinClip,
+    "draem": Draem,
+    "efficientad": EfficientAd
 }
 
 

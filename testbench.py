@@ -28,7 +28,7 @@ from anomalib.engine import Engine
 from config import (
     MVTEC_PATH, CATEGORIES, MODEL_NAMES,
     LIMIT_TEST_IMAGES, BATCH_SIZE_TRAIN, BATCH_SIZE_EVAL, CSV_OUTPUT,
-    MODEL_BATCH_SIZES
+    MODEL_BATCH_SIZES, MODEL_EPOCHS
 )
 from models import get_model
 from data_utils import load_mvtec_category
@@ -38,6 +38,8 @@ from metrics_utils import (
 )
 from results import BenchmarkResult, ResultsCollector
 
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.set_float32_matmul_precision("high")
 
 def parse_args():
     """Parse command line arguments."""
@@ -182,6 +184,9 @@ def run_single_benchmark(
     if model_name.lower() in ['vlmad', 'winclip']:
         # These models are zero-shot and don't need validation
         engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2, limit_val_batches=0)
+    elif model_name.lower() in ['draem', 'efficientad']:
+        epochs = MODEL_EPOCHS.get(model_name, 1)
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=epochs)
     else:
         engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2)
     
