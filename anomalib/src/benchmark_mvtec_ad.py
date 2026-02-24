@@ -26,35 +26,37 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
         torch.cuda.reset_peak_memory_stats()
         torch.cuda.empty_cache()
 
-    test_metrics = [
-        # AUROC(fields=["pred_score", "gt_label"]), # Image-level AUROC
-        AUROC(fields=["anomaly_map", "gt_mask"]), # Pixel-level AUROC
-        F1Score(fields=["pred_label", "gt_label"]), # Image-level F1
-        AUPRO(fields=["anomaly_map", "gt_mask"])
-    ]
-    evaluator = Evaluator(
-        test_metrics=test_metrics,
-        compute_on_cpu=False
-    )
+    test_metrics = {
+        "Image-AUROC": AUROC(fields=["pred_score", "gt_label"]),
+        "Pixel-AUROC": AUROC(fields=["anomaly_map", "gt_mask"]),
+        "Image-F1Score": F1Score(fields=["pred_label", "gt_label"]),
+        "AUPRO": AUPRO(fields=["anomaly_map", "gt_mask"])
+    }
 
     # 2. Créer l'engine en spécifiant ces métriques
     engine = Engine(
         max_epochs=max_epochs
     )
 
-    
-
     if model_class == WinClip:
-        model = model_class(class_name=category, evaluator=evaluator, visualizer=False)
+        model = model_class(class_name=category, visualizer=False)
         train_time = 0  # No training for winclip
     else:
-        model = model_class(evaluator=evaluator, visualizer=False)
+        model = model_class(visualizer=False)
         start_train = time.time()
-        engine.fit(model, datamodule)
+        engine.fit(model, datamodule=datamodule)
         train_time = time.time() - start_train
 
     start_inf = time.time()
-    metrics = engine.test(model, datamodule)
+
+    metrics = {}
+    predictions = engine.predict(model, datamodule=datamodule)
+    print("Computing the metrics :", test_metrics, " ...")
+    for metric_name, metric in test_metrics.items():
+        for batch in predictions:
+            metric.update(batch)
+        metrics[metric_name] = metric.compute()
+    print("Metrics computed :", metrics)
     inference_time = time.time() - start_inf
     
     fps = num_test_images / inference_time if inference_time > 0 else 0
@@ -64,7 +66,7 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
 
     if isinstance(metrics, list) and len(metrics) > 0:
         metrics = metrics[0]
-    print(metrics.keys())   
+
     performance_metrics = {
         "train_time_sec": round(train_time, 2),
         "inference_time_sec": round(inference_time, 2),
@@ -72,7 +74,7 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
         "peak_gpu_memory_mb": round(peak_gpu, 2),
         "peak_cpu_memory_mb": round(peak_cpu, 2),
         "raw_metrics": metrics
-        }
+    }
     
     return performance_metrics
 
@@ -94,7 +96,7 @@ if __name__ == "__main__":
         "zipper",
         "cable",
         
-        # Textures (5)
+        # # Textures (5)
         "carpet",
         "grid",
         "leather",
@@ -107,7 +109,7 @@ if __name__ == "__main__":
         "winclip": {"class": WinClip, "batch_size": 32, "epochs": 0},
         "patchcore": {"class": Patchcore, "batch_size": 32, "epochs": 1},
         "padim": {"class": Padim, "batch_size": 32, "epochs": 1},
-        # "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 200},
+        "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 200}
         # "draem": {"class": Draem, "batch_size": 8, "epochs": 700}
     }
     
