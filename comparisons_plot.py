@@ -15,7 +15,7 @@ sns.set_theme(style="whitegrid")
 # --------------------------------------------------
 df = pd.read_csv("mvtec_results.csv")
 
-# Work on a copy to avoid pandas warnings
+df = df[df["model"] != "ALL"]
 df_clean = df.copy()
 
 print("Models found:", sorted(df_clean["model"].unique()))
@@ -76,18 +76,42 @@ if not data.empty:
 data = df_clean.dropna(subset=["inference_fps", "image_AUROC"])
 
 if not data.empty:
-    plt.figure(figsize=(8,6))
 
+    model_avg = (
+        data.groupby("model", as_index=False)
+        .mean(numeric_only=True)
+    )
+
+    plt.figure(figsize=(9,7))
+
+    # Category-level points
     sns.scatterplot(
         data=data,
         x="inference_fps",
         y="image_AUROC",
         hue="model",
-        s=120
+        alpha=0.25,
+        legend=False
     )
 
-    for _, row in data.iterrows():
-        plt.text(row["inference_fps"], row["image_AUROC"], row["model"])
+    # Model averages
+    sns.scatterplot(
+        data=model_avg,
+        x="inference_fps",
+        y="image_AUROC",
+        hue="model",
+        s=300,
+        marker="X"
+    )
+
+    for _, row in model_avg.iterrows():
+        plt.text(
+            row["inference_fps"],
+            row["image_AUROC"],
+            row["model"],
+            fontsize=11,
+            weight="bold"
+        )
 
     plt.title("Speed vs Accuracy")
     save_plot("speed_vs_accuracy")
@@ -135,23 +159,47 @@ if not eff.empty:
 
 
 # --------------------------------------------------
-# Accuracy vs Memory
+# Accuracy vs GPU Memory
 # --------------------------------------------------
 data = df_clean.dropna(subset=["peak_gpu_memory_mb", "image_AUROC"])
 
 if not data.empty:
-    plt.figure(figsize=(8,6))
 
+    model_avg = (
+        data.groupby("model", as_index=False)
+        .mean(numeric_only=True)
+    )
+
+    plt.figure(figsize=(9,7))
+
+    # Category-level points (faint)
     sns.scatterplot(
         data=data,
         x="peak_gpu_memory_mb",
         y="image_AUROC",
         hue="model",
-        s=120
+        alpha=0.25,
+        legend=False
     )
 
-    for _, row in data.iterrows():
-        plt.text(row["peak_gpu_memory_mb"], row["image_AUROC"], row["model"])
+    # Model averages
+    sns.scatterplot(
+        data=model_avg,
+        x="peak_gpu_memory_mb",
+        y="image_AUROC",
+        hue="model",
+        s=300,
+        marker="X"
+    )
+
+    for _, row in model_avg.iterrows():
+        plt.text(
+            row["peak_gpu_memory_mb"],
+            row["image_AUROC"],
+            row["model"],
+            fontsize=11,
+            weight="bold"
+        )
 
     plt.title("Accuracy vs GPU Memory")
     save_plot("accuracy_vs_memory")
