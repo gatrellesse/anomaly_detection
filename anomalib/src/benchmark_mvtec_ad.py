@@ -5,9 +5,9 @@ import torch
 import psutil
 from anomalib.data import MVTecAD
 from anomalib.engine import Engine
-from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly
-
+from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly, Draem
 from utils import get_cpu_memory, extract_metric
+from anomalib.metrics import Evaluator, AUROC, F1Score, AUPRO
 
 def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
     # Setup Datamodule
@@ -26,14 +26,29 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
         torch.cuda.reset_peak_memory_stats()
         torch.cuda.empty_cache()
 
-    engine = Engine(max_epochs=max_epochs)
-    model = model_class()
+    test_metrics = [
+        # AUROC(fields=["pred_score", "gt_label"]), # Image-level AUROC
+        AUROC(fields=["anomaly_map", "gt_mask"]), # Pixel-level AUROC
+        F1Score(fields=["pred_label", "gt_label"]), # Image-level F1
+        AUPRO(fields=["anomaly_map", "gt_mask"])
+    ]
+    evaluator = Evaluator(
+        test_metrics=test_metrics,
+        compute_on_cpu=False
+    )
+
+    # 2. Créer l'engine en spécifiant ces métriques
+    engine = Engine(
+        max_epochs=max_epochs
+    )
+
+    
 
     if model_class == WinClip:
-        model = model_class(class_name=category)
+        model = model_class(class_name=category, evaluator=evaluator, visualizer=False)
         train_time = 0  # No training for winclip
     else:
-        model = model_class()
+        model = model_class(evaluator=evaluator, visualizer=False)
         start_train = time.time()
         engine.fit(model, datamodule)
         train_time = time.time() - start_train
@@ -49,7 +64,7 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
 
     if isinstance(metrics, list) and len(metrics) > 0:
         metrics = metrics[0]
-
+    print(metrics.keys())   
     performance_metrics = {
         "train_time_sec": round(train_time, 2),
         "inference_time_sec": round(inference_time, 2),
@@ -62,30 +77,44 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
     return performance_metrics
 
 if __name__ == "__main__":
-    MVTEC_PATH = "./" 
+    MVTEC_PATH = "./datasets/mvtec_ad" 
     CSV_OUTPUT = "results/mvtec_results.csv"
     os.makedirs("results", exist_ok=True)
 
     CATEGORIES = [
+        # Objets (10)
         "bottle",
         "capsule",
         "hazelnut",
+        "metal_nut",
+        "pill",
+        "screw",
+        "toothbrush",
+        "transistor",
+        "zipper",
+        "cable",
+        
+        # Textures (5)
+        "carpet",
+        "grid",
         "leather",
-        "metal_nut"
-        ]
+        "tile",
+        "wood"
+    ]
     
     MODELS = {
-        "dinomaly": {"class": Dinomaly, "batch_size": 32, "epochs": 1},
+        "dinomaly": {"class": Dinomaly, "batch_size": 1, "epochs": 30},
         "winclip": {"class": WinClip, "batch_size": 32, "epochs": 0},
         "patchcore": {"class": Patchcore, "batch_size": 32, "epochs": 1},
         "padim": {"class": Padim, "batch_size": 32, "epochs": 1},
-        "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 1}
+        # "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 200},
+        # "draem": {"class": Draem, "batch_size": 8, "epochs": 700}
     }
     
     rows = []
 
     fieldnames = [
-        "category", "model", "image_AUROC", "pixel_AUROC", "F1_Score",
+        "category", "model", "image_AUROC", "pixel_AUROC", "AUPRO", "F1_Score",
         "train_time_sec", "inference_time_sec", "inference_fps", 
         "peak_gpu_memory_mb", "peak_cpu_memory_mb"
     ]
@@ -109,12 +138,13 @@ if __name__ == "__main__":
                 image_auc = extract_metric(metrics, ["image_AUROC", "image/AUROC", "AUROC"])
                 pixel_auc = extract_metric(metrics, ["pixel_AUROC", "pixel/AUROC"])
                 f1_score = extract_metric(metrics, ["image_F1Score", "image/F1Score", "F1Score"])
-
+                aupro = extract_metric(metrics, ["AUPRO"])
                 row = {
                     "category": category,
                     "model": model_name,
                     "image_AUROC": image_auc,
                     "pixel_AUROC": pixel_auc,
+                    "AUPRO": aupro,
                     "F1_Score": f1_score,
                     "train_time_sec": result_data["train_time_sec"],
                     "inference_time_sec": result_data["inference_time_sec"],
