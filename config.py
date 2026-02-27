@@ -31,8 +31,8 @@ MODEL_NAMES = [
     "fastflow",
     # Transformer methods
     "dinomaly",
-    "vlmad",
-    "winclip",
+    # "vlmad",
+    # "winclip",
     "draem",
     "efficientad",
 ]

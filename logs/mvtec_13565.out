@@ -1,0 +1,1733 @@
+==== SLURM JOB INFO ====
+JobID: 13565
+Node: ensta-l40s02.r2.enst.fr
+GPUs: N/A
+========================
+Running testbench with train-together, categories: bottle, cable, capsule, model: patchcore, num-images: 20, limit-train-per-cat: 200
+GPU detected: NVIDIA L40S
+================================================================================
+ANOMALY DETECTION TESTBENCH
+================================================================================
+Categories: bottle, cable, capsule, carpet, grid, hazelnut, leather, metal_nut, pill, screw, tile, toothbrush, transistor, wood, zipper
+Models: patchcore, fastflow, dinomaly, vlmad, winclip, draem, efficientad
+Test images per category: ALL
+Output file: mvtec_results.csv
+Mode: Overwrite
+Accelerator: auto
+================================================================================
+
+========================================
+CATEGORY: bottle
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:02 • 0:00:00 24.92it/s 
+  Training completed in 31.83s
+  Testing patchcore on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0  x       ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            1.0            │
+│       image_F1Score       │    0.9919999837875366     │
+│        pixel_AUROC        │    0.9856160283088684     │
+│       pixel_F1Score       │    0.7263861298561096     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:05 • 0:00:00 0.90it/s 
+
+  patchcore Results:
+    Image AUROC: 1.0000
+    Pixel AUROC: 0.9856
+    F1 Score: 0.9920
+    Training Time: 31.83s
+    Inference Time: 7.63s
+    Inference FPS: 10.89
+    Peak GPU Memory: 3.21 GB
+    Peak CPU Memory: 1.95 GB
+
+--- Model: fastflow ---
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━━ 7/7 0:00:01 • 0:00:00 23.07it/s train_loss_step:  
+                                                              -57118.062        
+                                                              train_loss_epoch: 
+                                                              -8823.948         
+  Training completed in 6.51s
+  Testing fastflow on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9865078926086426     │
+│       image_F1Score       │          0.96875          │
+│        pixel_AUROC        │    0.9085846543312073     │
+│       pixel_F1Score       │    0.5908794403076172     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:04 • 0:00:00 1.03it/s 
+
+  fastflow Results:
+    Image AUROC: 0.9865
+    Pixel AUROC: 0.9086
+    F1 Score: 0.9688
+    Training Time: 6.51s
+    Inference Time: 7.06s
+    Inference FPS: 11.75
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 2.02 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 53/53 0:00:03 • 0:00:00 16.58it/s train_loss_step: 
+                                                               0.233            
+                                                               train_loss_epoch:
+                                                               0.412            
+  Training completed in 25.12s
+  Testing dinomaly on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9968253374099731     │
+│       image_F1Score       │    0.9921259880065918     │
+│        pixel_AUROC        │    0.9739117622375488     │
+│       pixel_F1Score       │    0.7450625896453857     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11/11 0:00:05 • 0:00:00 1.68it/s 
+
+  dinomaly Results:
+    Image AUROC: 0.9968
+    Pixel AUROC: 0.9739
+    F1 Score: 0.9921
+    Training Time: 25.12s
+    Inference Time: 9.11s
+    Inference FPS: 9.11
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.44 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training vlmad...
+  Training completed in 0.02s
+  Testing vlmad on 83 images...
+Testing                                         0/6 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on bottle: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training winclip...
+  Training completed in 6.50s
+  Testing winclip on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9722222089767456     │
+│       image_F1Score       │    0.3636363744735718     │
+│        pixel_AUROC        │     0.844735860824585     │
+│       pixel_F1Score       │            0.0            │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:08 • 0:00:00 0.63it/s 
+
+  winclip Results:
+    Image AUROC: 0.9722
+    Pixel AUROC: 0.8447
+    F1 Score: 0.3636
+    Training Time: 6.50s
+    Inference Time: 11.31s
+    Inference FPS: 7.34
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.38 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 105/105 0:00:09 •        12.39it/s train_loss_step: 
+                                    0:00:00                    0.107            
+                                                               train_loss_epoch:
+                                                               0.097            
+  Training completed in 1m 26.49s
+  Testing draem on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9285714030265808     │
+│       image_F1Score       │    0.9090909361839294     │
+│        pixel_AUROC        │     0.844383716583252     │
+│       pixel_F1Score       │    0.39659827947616577    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42/42 0:00:05 • 0:00:00 6.85it/s 
+
+  draem Results:
+    Image AUROC: 0.9286
+    Pixel AUROC: 0.8444
+    F1 Score: 0.9091
+    Training Time: 1m 26.49s
+    Inference Time: 7.54s
+    Inference FPS: 11.01
+    Peak GPU Memory: 3.61 GB
+    Peak CPU Memory: 3.62 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 83 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 209/209 0:00:07 •        30.25it/s train_st_step:   
+                                    0:00:00                    4.307            
+                                                               train_ae_step:   
+                                                               0.398            
+                                                               train_stae_step: 
+                                                               0.058            
+                                                               train_loss_step: 
+                                                               4.763            
+                                                               train_st_epoch:  
+                                                               4.157            
+                                                               train_ae_epoch:  
+                                                               0.405            
+                                                               train_stae_epoch:
+                                                               0.056            
+                                                               train_loss_epoch:
+                                                               4.618            
+  Training completed in 2m 46.93s
+  Testing efficientad on 83 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9801586866378784     │
+│       image_F1Score       │    0.9756097793579102     │
+│        pixel_AUROC        │    0.9420049786567688     │
+│       pixel_F1Score       │    0.6793885827064514     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:04 • 0:00:00 1.04it/s 
+
+  efficientad Results:
+    Image AUROC: 0.9802
+    Pixel AUROC: 0.9420
+    F1 Score: 0.9756
+    Training Time: 2m 46.93s
+    Inference Time: 6.70s
+    Inference FPS: 12.38
+    Peak GPU Memory: 1.16 GB
+    Peak CPU Memory: 3.02 GB
+
+========================================
+CATEGORY: cable
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:01 • 0:00:00 23.97it/s 
+  Training completed in 35.30s
+  Testing patchcore on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9880059957504272     │
+│       image_F1Score       │    0.9729729890823364     │
+│        pixel_AUROC        │     0.985050618648529     │
+│       pixel_F1Score       │    0.6396263837814331     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:13 • 0:00:00 0.69it/s 
+
+  patchcore Results:
+    Image AUROC: 0.9880
+    Pixel AUROC: 0.9851
+    F1 Score: 0.9730
+    Training Time: 35.30s
+    Inference Time: 16.71s
+    Inference FPS: 8.98
+    Peak GPU Memory: 3.41 GB
+    Peak CPU Memory: 3.14 GB
+
+--- Model: fastflow ---
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━━ 7/7 0:00:02 • 0:00:00 20.33it/s train_loss_step:  
+                                                              24192.758         
+                                                              train_loss_epoch: 
+                                                              59878.105         
+  Training completed in 10.00s
+  Testing fastflow on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.762556254863739     │
+│       image_F1Score       │    0.7872340679168701     │
+│        pixel_AUROC        │    0.7518942952156067     │
+│       pixel_F1Score       │    0.2302502691745758     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:12 • 0:00:00 0.72it/s 
+
+  fastflow Results:
+    Image AUROC: 0.7626
+    Pixel AUROC: 0.7519
+    F1 Score: 0.7872
+    Training Time: 10.00s
+    Inference Time: 15.80s
+    Inference FPS: 9.49
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 3.05 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 56/56 0:00:04 • 0:00:00 16.07it/s train_loss_step: 
+                                                               0.313            
+                                                               train_loss_epoch:
+                                                               0.474            
+  Training completed in 29.99s
+  Testing dinomaly on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.936469316482544     │
+│       image_F1Score       │    0.8914285898208618     │
+│        pixel_AUROC        │    0.9482637643814087     │
+│       pixel_F1Score       │     0.646213710308075     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 19/19 0:00:14 • 0:00:00 1.23it/s 
+
+  dinomaly Results:
+    Image AUROC: 0.9365
+    Pixel AUROC: 0.9483
+    F1 Score: 0.8914
+    Training Time: 29.99s
+    Inference Time: 19.24s
+    Inference FPS: 7.80
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.73 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training vlmad...
+  Training completed in 0.02s
+  Testing vlmad on 150 images...
+Testing                                        0/10 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on cable: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training winclip...
+  Training completed in 7.08s
+  Testing winclip on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.7351949214935303     │
+│       image_F1Score       │    0.7634408473968506     │
+│        pixel_AUROC        │    0.5614330768585205     │
+│       pixel_F1Score       │            0.0            │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:18 • 0:00:00 0.49it/s 
+
+  winclip Results:
+    Image AUROC: 0.7352
+    Pixel AUROC: 0.5614
+    F1 Score: 0.7634
+    Training Time: 7.08s
+    Inference Time: 22.58s
+    Inference FPS: 6.64
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.37 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 112/112 0:00:09 •        12.35it/s train_loss_step: 
+                                    0:00:00                    0.356            
+                                                               train_loss_epoch:
+                                                               0.360            
+  Training completed in 1m 33.03s
+  Testing draem on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.489130437374115     │
+│       image_F1Score       │    0.7603305578231812     │
+│        pixel_AUROC        │     0.856001615524292     │
+│       pixel_F1Score       │    0.22609512507915497    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 75/75 0:00:13 • 0:00:00 5.56it/s 
+
+  draem Results:
+    Image AUROC: 0.4891
+    Pixel AUROC: 0.8560
+    F1 Score: 0.7603
+    Training Time: 1m 33.03s
+    Inference Time: 15.49s
+    Inference FPS: 9.68
+    Peak GPU Memory: 3.61 GB
+    Peak CPU Memory: 3.64 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 150 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 224/224 0:00:11 •        21.17it/s train_st_step:   
+                                    0:00:00                    3.258            
+                                                               train_ae_step:   
+                                                               0.631            
+                                                               train_stae_step: 
+                                                               0.071            
+                                                               train_loss_step: 
+                                                               3.961            
+                                                               train_st_epoch:  
+                                                               3.969            
+                                                               train_ae_epoch:  
+                                                               0.582            
+                                                               train_stae_epoch:
+                                                               0.070            
+                                                               train_loss_epoch:
+                                                               4.622            
+  Training completed in 1m 14.41s
+  Testing efficientad on 150 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.8633808493614197     │
+│       image_F1Score       │    0.8643215894699097     │
+│        pixel_AUROC        │    0.9323581457138062     │
+│       pixel_F1Score       │    0.49107980728149414    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:12 • 0:00:00 0.71it/s 
+
+  efficientad Results:
+    Image AUROC: 0.8634
+    Pixel AUROC: 0.9324
+    F1 Score: 0.8643
+    Training Time: 1m 14.41s
+    Inference Time: 15.81s
+    Inference FPS: 9.49
+    Peak GPU Memory: 1.18 GB
+    Peak CPU Memory: 3.08 GB
+
+========================================
+CATEGORY: capsule
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:01 • 0:00:00 25.08it/s 
+  Training completed in 33.66s
+  Testing patchcore on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9924212098121643     │
+│       image_F1Score       │    0.9816513657569885     │
+│        pixel_AUROC        │    0.9899808168411255     │
+│       pixel_F1Score       │    0.5149100422859192     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:13 • 0:00:00 0.61it/s 
+
+  patchcore Results:
+    Image AUROC: 0.9924
+    Pixel AUROC: 0.9900
+    F1 Score: 0.9817
+    Training Time: 33.66s
+    Inference Time: 16.28s
+    Inference FPS: 8.11
+    Peak GPU Memory: 3.35 GB
+    Peak CPU Memory: 3.18 GB
+
+--- Model: fastflow ---
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━━ 7/7 0:00:02 • 0:00:00 24.32it/s train_loss_step:  
+                                                              -84671.719        
+                                                              train_loss_epoch: 
+                                                              -37089.270        
+  Training completed in 8.85s
+  Testing fastflow on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.6637414693832397     │
+│       image_F1Score       │    0.9083333611488342     │
+│        pixel_AUROC        │    0.9144080281257629     │
+│       pixel_F1Score       │    0.2025759369134903     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:13 • 0:00:00 0.61it/s 
+
+  fastflow Results:
+    Image AUROC: 0.6637
+    Pixel AUROC: 0.9144
+    F1 Score: 0.9083
+    Training Time: 8.85s
+    Inference Time: 16.45s
+    Inference FPS: 8.02
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 3.07 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 55/55 0:00:04 • 0:00:00 15.99it/s train_loss_step: 
+                                                               0.205            
+                                                               train_loss_epoch:
+                                                               0.381            
+  Training completed in 29.00s
+  Testing dinomaly on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.7881929874420166     │
+│       image_F1Score       │    0.9427312612533569     │
+│        pixel_AUROC        │    0.9670394659042358     │
+│       pixel_F1Score       │    0.43224069476127625    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 17/17 0:00:14 • 0:00:00 1.08it/s 
+
+  dinomaly Results:
+    Image AUROC: 0.7882
+    Pixel AUROC: 0.9670
+    F1 Score: 0.9427
+    Training Time: 29.00s
+    Inference Time: 18.70s
+    Inference FPS: 7.06
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.73 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training vlmad...
+  Training completed in 0.01s
+  Testing vlmad on 132 images...
+Testing                                         0/9 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on capsule: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training winclip...
+  Training completed in 7.17s
+  Testing winclip on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.6469885110855103     │
+│       image_F1Score       │    0.0181818176060915     │
+│        pixel_AUROC        │    0.8149126172065735     │
+│       pixel_F1Score       │            0.0            │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:18 • 0:00:00 0.46it/s 
+
+  winclip Results:
+    Image AUROC: 0.6470
+    Pixel AUROC: 0.8149
+    F1 Score: 0.0182
+    Training Time: 7.17s
+    Inference Time: 21.50s
+    Inference FPS: 6.14
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.35 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 110/110 0:00:09 •        12.40it/s train_loss_step: 
+                                    0:00:00                    0.055            
+                                                               train_loss_epoch:
+                                                               0.055            
+  Training completed in 1m 29.78s
+  Testing draem on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.6067012548446655     │
+│       image_F1Score       │    0.8999999761581421     │
+│        pixel_AUROC        │    0.8423826098442078     │
+│       pixel_F1Score       │    0.07265188544988632    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66/66 0:00:15 • 0:00:00 4.33it/s 
+
+  draem Results:
+    Image AUROC: 0.6067
+    Pixel AUROC: 0.8424
+    F1 Score: 0.9000
+    Training Time: 1m 29.78s
+    Inference Time: 17.13s
+    Inference FPS: 7.71
+    Peak GPU Memory: 3.61 GB
+    Peak CPU Memory: 3.64 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 132 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 219/219 0:00:10 •        23.08it/s train_st_step:   
+                                    0:00:00                    3.191            
+                                                               train_ae_step:   
+                                                               0.180            
+                                                               train_stae_step: 
+                                                               0.062            
+                                                               train_loss_step: 
+                                                               3.432            
+                                                               train_st_epoch:  
+                                                               3.981            
+                                                               train_ae_epoch:  
+                                                               0.259            
+                                                               train_stae_epoch:
+                                                               0.055            
+                                                               train_loss_epoch:
+                                                               4.295            
+  Training completed in 1m 9.36s
+  Testing efficientad on 132 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.5325089693069458     │
+│       image_F1Score       │    0.9037656784057617     │
+│        pixel_AUROC        │    0.9411975145339966     │
+│       pixel_F1Score       │    0.25783219933509827    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:13 • 0:00:00 0.62it/s 
+
+  efficientad Results:
+    Image AUROC: 0.5325
+    Pixel AUROC: 0.9412
+    F1 Score: 0.9038
+    Training Time: 1m 9.36s
+    Inference Time: 15.73s
+    Inference FPS: 8.39
+    Peak GPU Memory: 1.18 GB
+    Peak CPU Memory: 3.03 GB
+
+========================================
+CATEGORY: carpet
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:02 • 0:00:00 8.38it/s 
+  Training completed in 53.68s
+  Testing patchcore on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.986356258392334     │
+│       image_F1Score       │    0.9775280952453613     │
+│        pixel_AUROC        │    0.9906461834907532     │
+│       pixel_F1Score       │    0.6045705676078796     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:07 • 0:00:00 0.95it/s 
+
+  patchcore Results:
+    Image AUROC: 0.9864
+    Pixel AUROC: 0.9906
+    F1 Score: 0.9775
+    Training Time: 53.68s
+    Inference Time: 10.67s
+    Inference FPS: 10.96
+    Peak GPU Memory: 4.18 GB
+    Peak CPU Memory: 3.19 GB
+
+--- Model: fastflow ---
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━━ 9/9 0:00:02 • 0:00:00 10.73it/s train_loss_step:  
+                                                              -167492.375       
+                                                              train_loss_epoch: 
+                                                              -113562.539       
+  Training completed in 10.34s
+  Testing fastflow on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9875602126121521     │
+│       image_F1Score       │    0.9887640476226807     │
+│        pixel_AUROC        │    0.9832792282104492     │
+│       pixel_F1Score       │    0.5896625518798828     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:06 • 0:00:00 1.01it/s 
+
+  fastflow Results:
+    Image AUROC: 0.9876
+    Pixel AUROC: 0.9833
+    F1 Score: 0.9888
+    Training Time: 10.34s
+    Inference Time: 9.74s
+    Inference FPS: 12.02
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 3.04 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 70/70 0:00:05 • 0:00:00 15.82it/s train_loss_step: 
+                                                               0.189            
+                                                               train_loss_epoch:
+                                                               0.312            
+  Training completed in 28.52s
+  Testing dinomaly on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9987961053848267     │
+│       image_F1Score       │     0.994350254535675     │
+│        pixel_AUROC        │    0.9938521385192871     │
+│       pixel_F1Score       │    0.7143427729606628     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15/15 0:00:08 • 0:00:00 1.62it/s 
+
+  dinomaly Results:
+    Image AUROC: 0.9988
+    Pixel AUROC: 0.9939
+    F1 Score: 0.9944
+    Training Time: 28.52s
+    Inference Time: 12.51s
+    Inference FPS: 9.36
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.74 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training vlmad...
+  Training completed in 0.03s
+  Testing vlmad on 117 images...
+Testing                                         0/8 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on carpet: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training winclip...
+  Training completed in 6.87s
+  Testing winclip on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.993178129196167     │
+│       image_F1Score       │    0.49152541160583496    │
+│        pixel_AUROC        │    0.9104929566383362     │
+│       pixel_F1Score       │            0.0            │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:12 • 0:00:00 0.60it/s 
+
+  winclip Results:
+    Image AUROC: 0.9932
+    Pixel AUROC: 0.9105
+    F1 Score: 0.4915
+    Training Time: 6.87s
+    Inference Time: 15.60s
+    Inference FPS: 7.50
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.36 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 140/140 0:00:12 •        12.21it/s train_loss_step: 
+                                    0:00:00                    0.470            
+                                                               train_loss_epoch:
+                                                               0.470            
+  Training completed in 1m 41.25s
+  Testing draem on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.8543338179588318     │
+│       image_F1Score       │     0.914893627166748     │
+│        pixel_AUROC        │     0.886518657207489     │
+│       pixel_F1Score       │    0.37620821595191956    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 59/59 0:00:08 • 0:00:00 7.13it/s 
+
+  draem Results:
+    Image AUROC: 0.8543
+    Pixel AUROC: 0.8865
+    F1 Score: 0.9149
+    Training Time: 1m 41.25s
+    Inference Time: 10.20s
+    Inference FPS: 11.47
+    Peak GPU Memory: 3.60 GB
+    Peak CPU Memory: 3.64 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'carpet' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 117 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 280/280 0:00:12 •        23.26it/s train_st_step:   
+                                    0:00:00                    7.935            
+                                                               train_ae_step:   
+                                                               0.988            
+                                                               train_stae_step: 
+                                                               0.001            
+                                                               train_loss_step: 
+                                                               8.924            
+                                                               train_st_epoch:  
+                                                               8.569            
+                                                               train_ae_epoch:  
+                                                               1.027            
+                                                               train_stae_epoch:
+                                                               0.001            
+                                                               train_loss_epoch:
+                                                               9.597            
+  Training completed in 1m 22.74s
+  Testing efficientad on 117 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9911717176437378     │
+│       image_F1Score       │    0.9887640476226807     │
+│        pixel_AUROC        │    0.9668222665786743     │
+│       pixel_F1Score       │    0.7028853893280029     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:07 • 0:00:00 0.98it/s 
+
+  efficientad Results:
+    Image AUROC: 0.9912
+    Pixel AUROC: 0.9668
+    F1 Score: 0.9888
+    Training Time: 1m 22.74s
+    Inference Time: 9.89s
+    Inference FPS: 11.83
+    Peak GPU Memory: 1.17 GB
+    Peak CPU Memory: 3.06 GB
+
+========================================
+CATEGORY: grid
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:01 • 0:00:00 25.82it/s 
+  Training completed in 46.59s
+  Testing patchcore on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9899749159812927     │
+│       image_F1Score       │    0.9649122953414917     │
+│        pixel_AUROC        │    0.9831833243370056     │
+│       pixel_F1Score       │    0.38790592551231384    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:04 • 0:00:00 0.98it/s 
+
+  patchcore Results:
+    Image AUROC: 0.9900
+    Pixel AUROC: 0.9832
+    F1 Score: 0.9649
+    Training Time: 46.59s
+    Inference Time: 6.95s
+    Inference FPS: 11.22
+    Peak GPU Memory: 3.96 GB
+    Peak CPU Memory: 3.17 GB
+
+--- Model: fastflow ---
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━━ 9/9 0:00:01 • 0:00:00 23.94it/s train_loss_step:  
+                                                              -103972.781       
+                                                              train_loss_epoch: 
+                                                              -56749.949        
+  Training completed in 6.89s
+  Testing fastflow on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.7284879088401794     │
+│       image_F1Score       │    0.8661417365074158     │
+│        pixel_AUROC        │    0.8477128744125366     │
+│       pixel_F1Score       │    0.24767310917377472    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:03 • 0:00:00 1.04it/s 
+
+  fastflow Results:
+    Image AUROC: 0.7285
+    Pixel AUROC: 0.8477
+    F1 Score: 0.8661
+    Training Time: 6.89s
+    Inference Time: 6.47s
+    Inference FPS: 12.06
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 3.07 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 66/66 0:00:04 • 0:00:00 16.11it/s train_loss_step: 
+                                                               0.253            
+                                                               train_loss_epoch:
+                                                               0.387            
+  Training completed in 26.99s
+  Testing dinomaly on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9999999403953552     │
+│       image_F1Score       │            1.0            │
+│        pixel_AUROC        │    0.9937947988510132     │
+│       pixel_F1Score       │    0.5441715717315674     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:05 • 0:00:00 1.68it/s 
+
+  dinomaly Results:
+    Image AUROC: 1.0000
+    Pixel AUROC: 0.9938
+    F1 Score: 1.0000
+    Training Time: 26.99s
+    Inference Time: 8.05s
+    Inference FPS: 9.68
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.73 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training vlmad...
+  Training completed in 0.01s
+  Testing vlmad on 78 images...
+Testing                                         0/5 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on grid: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training winclip...
+  Training completed in 7.43s
+  Testing winclip on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9891395568847656     │
+│       image_F1Score       │    0.13114753365516663    │
+│        pixel_AUROC        │    0.8095276355743408     │
+│       pixel_F1Score       │            0.0            │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:07 • 0:00:00 0.62it/s 
+
+  winclip Results:
+    Image AUROC: 0.9891
+    Pixel AUROC: 0.8095
+    F1 Score: 0.1311
+    Training Time: 7.43s
+    Inference Time: 10.42s
+    Inference FPS: 7.49
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.37 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 132/132 0:00:11 •        12.34it/s train_loss_step: 
+                                    0:00:00                    0.810            
+                                                               train_loss_epoch:
+                                                               0.832            
+  Training completed in 1m 35.07s
+  Testing draem on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.55597323179245      │
+│       image_F1Score       │    0.8396946787834167     │
+│        pixel_AUROC        │    0.6374260187149048     │
+│       pixel_F1Score       │   0.020707059651613235    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 39/39 0:00:05 • 0:00:00 7.45it/s 
+
+  draem Results:
+    Image AUROC: 0.5560
+    Pixel AUROC: 0.6374
+    F1 Score: 0.8397
+    Training Time: 1m 35.07s
+    Inference Time: 6.73s
+    Inference FPS: 11.60
+    Peak GPU Memory: 3.60 GB
+    Peak CPU Memory: 3.65 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'grid' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 78 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 264/264 0:00:09 •        30.80it/s train_st_step:   
+                                    0:00:00                    3.925            
+                                                               train_ae_step:   
+                                                               0.965            
+                                                               train_stae_step: 
+                                                               0.002            
+                                                               train_loss_step: 
+                                                               4.891            
+                                                               train_st_epoch:  
+                                                               4.867            
+                                                               train_ae_epoch:  
+                                                               1.009            
+                                                               train_stae_epoch:
+                                                               0.002            
+                                                               train_loss_epoch:
+                                                               5.878            
+  Training completed in 1m 0.96s
+  Testing efficientad on 78 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9824561476707458     │
+│       image_F1Score       │    0.9734513163566589     │
+│        pixel_AUROC        │     0.910507082939148     │
+│       pixel_F1Score       │    0.4605799913406372     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:03 • 0:00:00 1.03it/s 
+
+  efficientad Results:
+    Image AUROC: 0.9825
+    Pixel AUROC: 0.9105
+    F1 Score: 0.9735
+    Training Time: 1m 0.96s
+    Inference Time: 6.50s
+    Inference FPS: 11.99
+    Peak GPU Memory: 1.16 GB
+    Peak CPU Memory: 3.03 GB
+
+========================================
+CATEGORY: hazelnut
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13/13 0:00:02 • 0:00:00 8.82it/s 
+  Training completed in 1m 41.79s
+  Testing patchcore on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            1.0            │
+│       image_F1Score       │    0.9928057789802551     │
+│        pixel_AUROC        │    0.9883453249931335     │
+│       pixel_F1Score       │    0.6324264407157898     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:09 • 0:00:00 0.66it/s 
+
+  patchcore Results:
+    Image AUROC: 1.0000
+    Pixel AUROC: 0.9883
+    F1 Score: 0.9928
+    Training Time: 1m 41.79s
+    Inference Time: 13.01s
+    Inference FPS: 8.46
+    Peak GPU Memory: 5.69 GB
+    Peak CPU Memory: 3.26 GB
+
+--- Model: fastflow ---
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training fastflow...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 13/13 0:00:03 • 0:00:00 8.20it/s train_loss_step:  
+                                                              -239551.281       
+                                                              train_loss_epoch: 
+                                                              -165148.469       
+  Training completed in 11.27s
+  Testing fastflow on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.775357186794281     │
+│       image_F1Score       │    0.8645161390304565     │
+│        pixel_AUROC        │    0.9391553401947021     │
+│       pixel_F1Score       │    0.4863147437572479     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:08 • 0:00:00 0.68it/s 
+
+  fastflow Results:
+    Image AUROC: 0.7754
+    Pixel AUROC: 0.9392
+    F1 Score: 0.8645
+    Training Time: 11.27s
+    Inference Time: 12.52s
+    Inference FPS: 8.78
+    Peak GPU Memory: 2.72 GB
+    Peak CPU Memory: 3.01 GB
+
+--- Model: dinomaly ---
+  Using model-specific batch sizes: train=4, eval=8
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training dinomaly...
+┏━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name              ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor     │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor    │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator         │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model             │ DinomalyModel │  147 M │ train │     0 │
+│ 4 │ trainable_modules │ ModuleList    │ 61.4 M │ train │     0 │
+└───┴───────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 61.4 M                                                        
+Non-trainable params: 86.6 M                                                    
+Total params: 147 M                                                             
+Total estimated model params size (MB): 591                                     
+Modules in train mode: 385                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 98/98 0:00:06 • 0:00:00 15.68it/s train_loss_step: 
+                                                               0.193            
+                                                               train_loss_epoch:
+                                                               0.325            
+  Training completed in 31.80s
+  Testing dinomaly on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            1.0            │
+│       image_F1Score       │    0.9928057789802551     │
+│        pixel_AUROC        │    0.9921059012413025     │
+│       pixel_F1Score       │    0.7250568866729736     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14/14 0:00:10 • 0:00:00 1.19it/s 
+
+  dinomaly Results:
+    Image AUROC: 1.0000
+    Pixel AUROC: 0.9921
+    F1 Score: 0.9928
+    Training Time: 31.80s
+    Inference Time: 14.92s
+    Inference FPS: 7.37
+    Peak GPU Memory: 3.28 GB
+    Peak CPU Memory: 3.73 GB
+
+--- Model: vlmad ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training vlmad...
+  Training completed in 0.03s
+  Testing vlmad on 110 images...
+Testing                                         0/7 0:00:00 • -:--:-- 0.00it/s 
+Error running vlmad on hazelnut: Failed to connect to Ollama. Please check that Ollama is downloaded, running and accessible. https://ollama.com/download
+
+--- Model: winclip ---
+  Using model-specific batch sizes: train=8, eval=16
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training winclip...
+  Training completed in 7.30s
+  Testing winclip on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.8735714554786682     │
+│       image_F1Score       │    0.5416666865348816     │
+│        pixel_AUROC        │    0.9670519232749939     │
+│       pixel_F1Score       │            0.0            │
+�───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:13 • 0:00:00 0.48it/s 
+
+  winclip Results:
+    Image AUROC: 0.8736
+    Pixel AUROC: 0.9671
+    F1 Score: 0.5417
+    Training Time: 7.30s
+    Inference Time: 17.25s
+    Inference FPS: 6.38
+    Peak GPU Memory: 2.00 GB
+    Peak CPU Memory: 3.47 GB
+
+--- Model: draem ---
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training draem...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+  Epoch 4/4  ━━━━━━━━━━━━━━━━ 196/196 0:00:16 •        12.11it/s train_loss_step: 
+                                    0:00:00                    0.132            
+                                                               train_loss_epoch:
+                                                               0.095            
+  Training completed in 2m 2.55s
+  Testing draem on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.912142813205719     │
+│       image_F1Score       │    0.8724831938743591     │
+│        pixel_AUROC        │    0.9397047758102417     │
+│       pixel_F1Score       │    0.3945019841194153     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 55/55 0:00:10 • 0:00:00 5.02it/s 
+
+  draem Results:
+    Image AUROC: 0.9121
+    Pixel AUROC: 0.9397
+    F1 Score: 0.8725
+    Training Time: 2m 2.55s
+    Inference Time: 12.59s
+    Inference FPS: 8.74
+    Peak GPU Memory: 3.60 GB
+    Peak CPU Memory: 3.64 GB
+
+--- Model: efficientad ---
+  Using model-specific batch sizes: train=1, eval=16
+MVTec AD category 'hazelnut' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 110 test images
+  Training efficientad...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type             ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor     │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor    │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator        │      0 │ train │     0 │
+│ 3 │ model          │ EfficientAdModel │  8.1 M │ train │     0 │
+└───┴────────────────┴──────────────────┴────────┴───────┴───────┘
+Trainable params: 8.1 M                                                         
+Non-trainable params: 0                                                         
+Total params: 8.1 M                                                             
+Total estimated model params size (MB): 32                                      
+Modules in train mode: 48                                                       
+Modules in eval mode: 7                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 391/391 0:00:18 •        21.87it/s train_st_step:   
+                                    0:00:00                    1.586            
+                                                               train_ae_step:   
+                                                               0.158            
+                                                               train_stae_step: 
+                                                               0.077            
+                                                               train_loss_step: 
+                                                               1.820            
+                                                               train_st_epoch:  
+                                                               1.944            
+                                                               train_ae_epoch:  
+                                                               0.244            
+                                                               train_stae_epoch:
+                                                               0.069            
+                                                               train_loss_epoch:
+                                                               2.257            
+  Training completed in 1m 49.15s
+  Testing efficientad on 110 images...
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.8224999308586121     │
+│       image_F1Score       │    0.8500000238418579     │
+│        pixel_AUROC        │     0.744452953338623     │
+│       pixel_F1Score       │     0.433628648519516     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 7/7 0:00:08 • 0:00:00 0.69it/s 
+
+  efficientad Results:
+    Image AUROC: 0.8225
+    Pixel AUROC: 0.7445
+    F1 Score: 0.8500
+    Training Time: 1m 49.15s
+    Inference Time: 12.30s
+    Inference FPS: 8.95
+    Peak GPU Memory: 1.17 GB
+    Peak CPU Memory: 3.07 GB
+
+========================================
+CATEGORY: leather
+========================================
+
+--- Model: patchcore ---
+MVTec AD category 'leather' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Loaded 124 test images
+  Training patchcore...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  

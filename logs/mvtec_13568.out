@@ -1,0 +1,89 @@
+==== SLURM JOB INFO ====
+JobID: 13568
+Node: ensta-l40s02.r2.enst.fr
+GPUs: N/A
+========================
+Running testbench with train-together, categories: bottle, cable, capsule, model: patchcore, num-images: 20, limit-train-per-cat: 200
+GPU detected: NVIDIA L40S
+================================================================================
+ANOMALY DETECTION TESTBENCH (TRAIN TOGETHER)
+================================================================================
+Train-together categories: bottle, cable, capsule
+Models: patchcore
+Test images per category: 20
+Limit train images per category: 200
+Output file: mvtec_results_train_together.csv
+Mode: Overwrite
+Accelerator: auto
+================================================================================
+
+========================================
+MODEL (train once): patchcore
+========================================
+MVTec AD dataset already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Training patchcore on concatenated TRAIN set...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Error training patchcore in train-together mode: An invalid dataloader was passed to `Trainer.fit(train_dataloaders=...)`. Found <data_utils_multi.MultiCategoryMVTecAD object at 0x7903e4c17c80>.
+
+================================================================================
+BENCHMARK SUMMARY
+================================================================================
+
+bottle - patchcore:
+  Image AUROC: N/A
+  Pixel AUROC: N/A
+  F1 Score: N/A
+  Train Time: N/A
+  Inference Time: N/A
+  Inference FPS: N/A
+  Peak GPU Memory: N/A
+  Peak CPU Memory: N/A
+
+cable - patchcore:
+  Image AUROC: N/A
+  Pixel AUROC: N/A
+  F1 Score: N/A
+  Train Time: N/A
+  Inference Time: N/A
+  Inference FPS: N/A
+  Peak GPU Memory: N/A
+  Peak CPU Memory: N/A
+
+capsule - patchcore:
+  Image AUROC: N/A
+  Pixel AUROC: N/A
+  F1 Score: N/A
+  Train Time: N/A
+  Inference Time: N/A
+  Inference FPS: N/A
+  Peak GPU Memory: N/A
+  Peak CPU Memory: N/A
+
+================================================================================
+GLOBAL AVERAGES
+================================================================================
+  Average Image AUROC: N/A
+  Average Pixel AUROC: N/A
+  Average F1 Score: N/A
+  Average Train Time: N/A
+  Average Inference Time: N/A
+  Average Inference FPS: N/A
+  Average Peak GPU Memory: N/A
+  Average Peak CPU Memory: N/A
+
+Results saved to: mvtec_results_train_together.csv
+Done.
