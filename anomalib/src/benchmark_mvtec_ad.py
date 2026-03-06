@@ -5,11 +5,21 @@ import torch
 import psutil
 from anomalib.data import MVTecAD
 from anomalib.engine import Engine
-from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly, Draem
+from anomalib.models import Patchcore, Padim, EfficientAd, WinClip, Dinomaly, Draem, VlmAd, Fastflow
 from utils import get_cpu_memory, extract_metric
 from anomalib.metrics import Evaluator, AUROC, F1Score, AUPRO
+from lightning.pytorch.loggers import CSVLogger
 
 def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
+    
+    #les logs seront sauvegardés dans le dossier logs/{model_name}/{category}
+    logger = CSVLogger(save_dir="logs", name=model_name, version=category)
+
+    img_auroc = AUROC(fields=["pred_score", "gt_label"])
+    aupro = AUPRO(fields=["anomaly_map", "gt_mask"])    
+    evaluator = Evaluator(val_metrics=[aupro, img_auroc],
+                          compute_on_cpu=False)
+    
     # Setup Datamodule
     datamodule = MVTecAD(
         root=mvtec_path,
@@ -35,14 +45,20 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
 
     # 2. Créer l'engine en spécifiant ces métriques
     engine = Engine(
-        max_epochs=max_epochs
-    )
+        logger=logger,
+        max_epochs=max_epochs,
+        log_every_n_steps=999999999,
+        check_val_every_n_epoch=1
+        )
 
     if model_class == WinClip:
         model = model_class(class_name=category, visualizer=False)
         train_time = 0  # No training for winclip
+    elif model_class == VlmAd:
+        model = model_class()
+        train_time = 0  # No training for vlmad
     else:
-        model = model_class(visualizer=False)
+        model = model_class(visualizer=False, evaluator=evaluator)
         start_train = time.time()
         engine.fit(model, datamodule=datamodule)
         train_time = time.time() - start_train
@@ -51,21 +67,20 @@ def run_testbench(category, model_class, batch_size, max_epochs, mvtec_path):
 
     metrics = {}
     predictions = engine.predict(model, datamodule=datamodule)
+
+    inference_time = time.time() - start_inf
+
     print("Computing the metrics :", test_metrics, " ...")
     for metric_name, metric in test_metrics.items():
         for batch in predictions:
             metric.update(batch)
         metrics[metric_name] = metric.compute()
     print("Metrics computed :", metrics)
-    inference_time = time.time() - start_inf
     
     fps = num_test_images / inference_time if inference_time > 0 else 0
     
     peak_gpu = torch.cuda.max_memory_allocated() / (1024 * 1024) if torch.cuda.is_available() else 0
     peak_cpu = get_cpu_memory()
-
-    if isinstance(metrics, list) and len(metrics) > 0:
-        metrics = metrics[0]
 
     performance_metrics = {
         "train_time_sec": round(train_time, 2),
@@ -96,7 +111,7 @@ if __name__ == "__main__":
         "zipper",
         "cable",
         
-        # # Textures (5)
+        # Textures (5)
         "carpet",
         "grid",
         "leather",
@@ -105,12 +120,13 @@ if __name__ == "__main__":
     ]
     
     MODELS = {
-        "dinomaly": {"class": Dinomaly, "batch_size": 1, "epochs": 30},
-        "winclip": {"class": WinClip, "batch_size": 32, "epochs": 0},
-        "patchcore": {"class": Patchcore, "batch_size": 32, "epochs": 1},
-        "padim": {"class": Padim, "batch_size": 32, "epochs": 1},
-        "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 200}
-        # "draem": {"class": Draem, "batch_size": 8, "epochs": 700}
+        # "dinomaly": {"class": Dinomaly, "batch_size": 8, "epochs": 1}
+        # "winclip": {"class": WinClip, "batch_size": 8, "epochs": 0},
+        # "patchcore": {"class": Patchcore, "batch_size": 8, "epochs": 1},
+        # "padim": {"class": Padim, "batch_size": 8, "epochs": 1},
+        # "efficientad": {"class": EfficientAd, "batch_size": 1, "epochs": 40}
+        # "draem": {"class": Draem, "batch_size": 8, "epochs": 700},
+        "vlmad": {"class": VlmAd, "batch_size": 8, "epochs": 0}
     }
     
     rows = []
@@ -125,7 +141,7 @@ if __name__ == "__main__":
         for model_name, config in MODELS.items():
             
             print(f"\n>>> Processing: {category} | {model_name}")
-
+            
             try:
                 result_data = run_testbench(
                     category,
@@ -137,9 +153,9 @@ if __name__ == "__main__":
 
                 metrics = result_data["raw_metrics"]
 
-                image_auc = extract_metric(metrics, ["image_AUROC", "image/AUROC", "AUROC"])
-                pixel_auc = extract_metric(metrics, ["pixel_AUROC", "pixel/AUROC"])
-                f1_score = extract_metric(metrics, ["image_F1Score", "image/F1Score", "F1Score"])
+                image_auc = extract_metric(metrics, ["Image-AUROC"])
+                pixel_auc = extract_metric(metrics, ["Pixel-AUROC"])
+                f1_score = extract_metric(metrics, ["Image-F1Score"])
                 aupro = extract_metric(metrics, ["AUPRO"])
                 row = {
                     "category": category,
