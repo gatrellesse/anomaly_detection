@@ -1,7 +1,0 @@
-/home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/venv/lib/python3.12/site-packages/timm/models/layers/__init__.py:48: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
-  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
-usage: testbench.py [-h]
-                    [-c {bottle,cable,capsule,carpet,grid,hazelnut,leather,metal_nut,pill,screw,tile,toothbrush,transistor,wood,zipper} [{bottle,cable,capsule,carpet,grid,hazelnut,leather,metal_nut,pill,screw,tile,toothbrush,transistor,wood,zipper} ...]]
-                    [-m {patchcore,fastflow,dinomaly,vlmad,winclip,draem,efficientad} [{patchcore,fastflow,dinomaly,vlmad,winclip,draem,efficientad} ...]]
-                    [-n NUM_IMAGES] [-o OUTPUT] [--list] [--append] [--cpu]
-testbench.py: error: unrecognized arguments: --train-together --limit-train-per-cat 200

@@ -31,12 +31,38 @@ source venv/bin/activate
 
 # 4) rodar o testbench
 # ---- EXEMPLO: train-together com 3 categorias e 1 modelo ----
-echo "Running testbench with train-together, with all categories and all models"
+# echo "Running testbench with train-together, with all categories and all models"
+# python testbench.py \
+#  --train-together 
+#   # --category bottle cable capsule \ colocando todas as categorias, não precisa especificar
+#   # --model patchcore 
+#   # --num-images 20 \
+#   # --limit-train-per-cat 200
+# echo "Done."
+
+# echo "Running train-together: textures only"
+# python testbench.py \
+#   --train-together \
+#   --category carpet grid leather tile wood \
+#   --model fastflow draem patchcore \
+#   --output mvtec_tt_textures.csv
+
+# echo "Done."
+
+# echo "Running train-together: objects only"
+# python testbench.py \
+#   --train-together \
+#   --category bottle cable capsule hazelnut metal_nut pill screw toothbrush transistor zipper \
+#   --model fastflow draem patchcore \
+#   --output mvtec_tt_objects.csv
+
+# echo "Done."
+
+echo "Running train-together: mixed subset"
 python testbench.py \
- --train-together 
-  # --category bottle cable capsule \ colocando todas as categorias, não precisa especificar
-  # --model patchcore 
-  # --num-images 20 \
-  # --limit-train-per-cat 200
+  --train-together \
+  --category bottle cable capsule leather wood \
+  --model fastflow draem patchcore \
+  --output mvtec_tt_mixed5.csv
 
 echo "Done."

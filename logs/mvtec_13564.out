@@ -1,7 +1,0 @@
-==== SLURM JOB INFO ====
-JobID: 13564
-Node: ensta-l40s02.r2.enst.fr
-GPUs: N/A
-========================
-Running testbench with train-together, categories: bottle, cable, capsule, model: patchcore, num-images: 20, limit-train-per-cat: 200
-Done.
