@@ -1,182 +1,368 @@
+"""
+Anomaly Detection Testbench
+
+This script benchmarks anomaly detection models on the MVTec AD dataset,
+tracking performance metrics including:
+- Image AUROC, Pixel AUROC, F1 Score
+- Training time
+- Inference time and FPS
+- GPU and CPU memory utilization
+
+Usage:
+    python testbench.py                          # Run all categories and models
+    python testbench.py --category bottle        # Run only 'bottle' category
+    python testbench.py --model patchcore        # Run only 'patchcore' model
+    python testbench.py --category bottle --model padim  # Run specific combination
+    python testbench.py --list                   # List available categories and models
+"""
+
 import os
-import csv
-from anomalib.data import MVTecAD
+import sys
+import gc
+import shutil
+import traceback
+import argparse
+import torch
 from anomalib.engine import Engine
-from anomalib.models import Patchcore, Padim, Fastflow
-from torch.utils.data import Subset, DataLoader
 
-MVTEC_PATH = "/home/gabriel/ensta_3/anomaly_detection/MVTecAD"
+from config import (
+    MVTEC_PATH, CATEGORIES, MODEL_NAMES,
+    LIMIT_TEST_IMAGES, BATCH_SIZE_TRAIN, BATCH_SIZE_EVAL, CSV_OUTPUT,
+    MODEL_BATCH_SIZES, MODEL_EPOCHS
+)
+from models import get_model
+from data_utils import load_mvtec_category
+from metrics_utils import (
+    PerformanceTracker, extract_model_metrics,
+    format_time, format_memory
+)
+from results import BenchmarkResult, ResultsCollector
 
-CATEGORIES = [
-    "bottle",
-    "capsule",
-    "cable",
-    "wood"
-]
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.set_float32_matmul_precision("high")
 
-MODELS = {
-    "patchcore": Patchcore,
-    "padim": Padim,
-}
-
-LIMIT_TEST_IMAGES = 50
-CSV_OUTPUT = "mvtec_results.csv"
-
-def extract_metric(metrics, possible_keys):
-    """Try multiple possible metric keys and return the first found."""
-    for key in possible_keys:
-        if key in metrics:
-            value = metrics[key]
-            # Handle tensor values
-            if hasattr(value, 'item'):
-                return value.item()
-            return value
-    return None
-
-def run_testbench():
-    rows = []
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Anomaly Detection Testbench for MVTec AD dataset",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+    python testbench.py                              # Run all
+    python testbench.py --category bottle            # Single category
+    python testbench.py --model patchcore            # Single model
+    python testbench.py -c bottle -m padim           # Specific combination
+    python testbench.py --category bottle capsule    # Multiple categories
+    python testbench.py --list                       # Show available options
+        """
+    )
     
-    for category in CATEGORIES:
-        print(f"\n=== CATEGORY: {category} ===")
+    parser.add_argument(
+        "-c", "--category",
+        nargs="+",
+        choices=CATEGORIES,
+        help=f"Category(ies) to run. Available: {', '.join(CATEGORIES)}"
+    )
+    
+    parser.add_argument(
+        "-m", "--model",
+        nargs="+",
+        choices=MODEL_NAMES,
+        help=f"Model(s) to run. Available: {', '.join(MODEL_NAMES)}"
+    )
+    
+    parser.add_argument(
+        "-n", "--num-images",
+        type=int,
+        default=LIMIT_TEST_IMAGES,
+        help=f"Number of test images per category (default: {LIMIT_TEST_IMAGES or 'ALL'})"
+    )
+    
+    parser.add_argument(
+        "-o", "--output",
+        type=str,
+        default=CSV_OUTPUT,
+        help=f"Output CSV file path (default: {CSV_OUTPUT})"
+    )
+    
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="List available categories and models"
+    )
+    
+    parser.add_argument(
+        "--append",
+        action="store_true",
+        help="Append results to existing CSV instead of overwriting"
+    )
+    
+    parser.add_argument(
+        "--cpu",
+        action="store_true",
+        help="Force CPU-only mode (useful for CUDA compatibility issues)"
+    )
+    
+    return parser.parse_args()
+
+
+def list_options():
+    """Print available categories and models."""
+    print("\nAvailable Categories:")
+    for cat in CATEGORIES:
+        print(f"  - {cat}")
+    
+    print("\nAvailable Models:")
+    for model in MODEL_NAMES:
+        print(f"  - {model}")
+    
+    print(f"\nDefault test images: {LIMIT_TEST_IMAGES or 'ALL'}")
+    print(f"Default output file: {CSV_OUTPUT}")
+
+
+def patch_windows_symlink():
+    """Patch os.symlink on Windows to copy directory instead of creating symlink."""
+    if sys.platform == "win32":
+        original_symlink = os.symlink
         
+        def symlink_or_copy(src, dst, target_is_directory=False):
+            try:
+                original_symlink(src, dst, target_is_directory=target_is_directory)
+            except OSError:
+                # Symlink failed (no privileges), use copy instead
+                if target_is_directory:
+                    if os.path.exists(dst):
+                        shutil.rmtree(dst)
+                    shutil.copytree(src, dst)
+                else:
+                    shutil.copy2(src, dst)
+        
+        os.symlink = symlink_or_copy
+        print("Windows detected: patched symlink to use copy fallback")
+
+
+def cleanup_gpu():
+    """Clean up GPU memory between runs to prevent CUDA errors."""
+    gc.collect()
+    if torch.cuda.is_available():
         try:
-            # Load dataset
-            datamodule = MVTecAD(
-                root=MVTEC_PATH,
-                category=category,
-                train_batch_size=32,
-                eval_batch_size=32,
-            )
-            
-            # Setup the datamodule (important!)
-            datamodule.setup()
-            
-            # Get the test dataloader
-            test_loader = datamodule.test_dataloader()
-            
-            # If we want to limit test images, we need to create a custom loader
-            if LIMIT_TEST_IMAGES is not None:
-                # Access the underlying dataset from the dataloader
-                original_dataset = test_loader.dataset
-                
-                # Create a subset
-                limited_indices = range(min(LIMIT_TEST_IMAGES, len(original_dataset)))
-                test_dataset = Subset(original_dataset, limited_indices)
-                
-                # Create new dataloader with limited dataset, preserving collate_fn
-                test_loader = DataLoader(
-                    test_dataset,
-                    batch_size=test_loader.batch_size,
-                    shuffle=False,
-                    num_workers=0,  # Set to 0 to avoid multiprocessing issues
-                    collate_fn=test_loader.collate_fn  # Preserve anomalib's custom collate function
-                )
-                
-                print(f"Limited test set to {len(test_dataset)} images")
-                
+            torch.cuda.synchronize()
+            torch.cuda.empty_cache()
+            torch.cuda.reset_peak_memory_stats()
         except Exception as e:
-            print(f"Error loading dataset for {category}: {e}")
-            import traceback
-            traceback.print_exc()
-            continue
+            print(f"  Warning: GPU cleanup failed ({e})")
+
+
+def run_single_benchmark(
+    model_name: str,
+    datamodule,
+    test_loader,
+    num_test_images: int,
+    tracker: PerformanceTracker,
+    accelerator: str = "auto"
+) -> BenchmarkResult:
+    """Run a single model benchmark.
+    
+    Args:
+        model_name: Name of the model to benchmark
+        datamodule: The data module for training
+        test_loader: DataLoader for testing
+        num_test_images: Number of test images
+        tracker: Performance tracker instance
+        accelerator: Device accelerator ('auto', 'cpu', 'gpu')
         
-        for model_name, model_class in MODELS.items():
-            print(f"\nRunning model: {model_name}")
+    Returns:
+        BenchmarkResult containing all metrics
+    """
+    # Clean up GPU memory before starting
+    cleanup_gpu()
+    
+    tracker.reset()
+    
+    # Create fresh engine and model for each run
+    # Handle models that don't require validation during training
+    if model_name.lower() in ['vlmad', 'winclip']:
+        # These models are zero-shot and don't need validation
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2, limit_val_batches=0)
+    elif model_name.lower() in ['draem', 'efficientad']:
+        epochs = MODEL_EPOCHS.get(model_name, 1)
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=epochs)
+    else:
+        engine = Engine(default_root_dir="./results", accelerator=accelerator, max_epochs=2)
+    
+    model = get_model(model_name)
+    
+    # Train model with timing
+    print(f"  Training {model_name}...")
+    tracker.start_training()
+    engine.fit(model, datamodule)
+    tracker.end_training()
+    
+    print(f"  Training completed in {format_time(tracker.get_train_time())}")
+    
+    # Evaluate on test set with timing
+    print(f"  Testing {model_name} on {num_test_images} images...")
+    tracker.start_inference()
+    raw_metrics = engine.test(model, test_loader)
+    tracker.end_inference(num_test_images)
+    
+    # Extract model metrics
+    model_metrics = extract_model_metrics(raw_metrics)
+    
+    # Get performance metrics
+    perf_metrics = tracker.get_metrics()
+    
+    # Print results
+    print(f"\n  {model_name} Results:")
+    print(f"    Image AUROC: {model_metrics['image_auroc']:.4f}" if model_metrics['image_auroc'] else "    Image AUROC: N/A")
+    print(f"    Pixel AUROC: {model_metrics['pixel_auroc']:.4f}" if model_metrics['pixel_auroc'] else "    Pixel AUROC: N/A")
+    print(f"    F1 Score: {model_metrics['f1_score']:.4f}" if model_metrics['f1_score'] else "    F1 Score: N/A")
+    print(f"    Training Time: {format_time(perf_metrics.train_time_seconds)}")
+    print(f"    Inference Time: {format_time(perf_metrics.inference_time_seconds)}")
+    print(f"    Inference FPS: {perf_metrics.inference_fps:.2f}")
+    print(f"    Peak GPU Memory: {format_memory(perf_metrics.peak_gpu_memory_mb)}")
+    print(f"    Peak CPU Memory: {format_memory(perf_metrics.peak_cpu_memory_mb)}")
+    
+    # Build result before cleanup
+    result = BenchmarkResult(
+        category="",  # Will be set by caller
+        model=model_name,
+        image_AUROC=model_metrics['image_auroc'],
+        pixel_AUROC=model_metrics['pixel_auroc'],
+        F1_Score=model_metrics['f1_score'],
+        train_time_sec=perf_metrics.train_time_seconds,
+        inference_time_sec=perf_metrics.inference_time_seconds,
+        inference_fps=perf_metrics.inference_fps,
+        peak_gpu_memory_mb=perf_metrics.peak_gpu_memory_mb,
+        peak_cpu_memory_mb=perf_metrics.peak_cpu_memory_mb,
+        num_test_images=num_test_images,
+    )
+    
+    # Clean up model and engine to free GPU memory
+    del model
+    del engine
+    cleanup_gpu()
+    
+    return result
+
+
+def run_testbench(
+    categories: list,
+    models: list,
+    num_images: int,
+    output_file: str,
+    append: bool = False,
+    accelerator: str = "auto"
+):
+    """Run the testbench with specified categories and models.
+    
+    Args:
+        categories: List of categories to test
+        models: List of models to test
+        num_images: Number of test images (None for all)
+        output_file: Path to output CSV file
+        append: Whether to append to existing CSV
+        accelerator: Device accelerator ('auto', 'cpu', 'gpu')
+    """
+    results_collector = ResultsCollector()
+    tracker = PerformanceTracker()
+    
+    print("=" * 80)
+    print("ANOMALY DETECTION TESTBENCH")
+    print("=" * 80)
+    print(f"Categories: {', '.join(categories)}")
+    print(f"Models: {', '.join(models)}")
+    print(f"Test images per category: {num_images or 'ALL'}")
+    print(f"Output file: {output_file}")
+    print(f"Mode: {'Append' if append else 'Overwrite'}")
+    print(f"Accelerator: {accelerator}")
+    print("=" * 80)
+    
+    for category in categories:
+        print(f"\n{'=' * 40}")
+        print(f"CATEGORY: {category}")
+        print(f"{'=' * 40}")
+        
+        for model_name in models:
+            print(f"\n--- Model: {model_name} ---")
             
             try:
-                # Create fresh engine for each model
-                engine = Engine()
-                model = model_class()
+                # Get model-specific batch sizes
+                model_config = MODEL_BATCH_SIZES.get(model_name.lower(), {})
+                train_batch = model_config.get("train", BATCH_SIZE_TRAIN)
+                eval_batch = model_config.get("eval", BATCH_SIZE_EVAL)
                 
-                # Train model
-                print(f"  Training {model_name}...")
-                engine.fit(model, datamodule)
+                if model_config:
+                    print(f"  Using model-specific batch sizes: train={train_batch}, eval={eval_batch}")
                 
-                # Evaluate on test set (limited or full)
-                print(f"  Testing {model_name}...")
-                metrics = engine.test(model, test_loader)
+                # Load dataset with model-specific batch sizes
+                datamodule, test_loader, actual_num_images = load_mvtec_category(
+                    root=MVTEC_PATH,
+                    category=category,
+                    train_batch_size=train_batch,
+                    eval_batch_size=eval_batch,
+                    limit_test_images=num_images
+                )
+                print(f"  Loaded {actual_num_images} test images")
                 
-                print(f"  Raw metrics: {metrics}")  # Debug: see what keys are available
+                result = run_single_benchmark(
+                    model_name=model_name,
+                    datamodule=datamodule,
+                    test_loader=test_loader,
+                    num_test_images=actual_num_images,
+                    tracker=tracker,
+                    accelerator=accelerator
+                )
+                result.category = category
+                results_collector.add_result(result)
                 
-                # Handle metrics being returned as a list
-                if isinstance(metrics, list) and len(metrics) > 0:
-                    metrics = metrics[0]
-                
-                # Extract metrics with multiple possible keys
-                image_auc = extract_metric(metrics, ["image_AUROC", "image/AUROC", "AUROC"])
-                pixel_auc = extract_metric(metrics, ["pixel_AUROC", "pixel/AUROC"])
-                f1_score = extract_metric(metrics, ["image_F1Score", "image/F1Score", "F1Score", "image_F1"])
-                
-                rows.append({
-                    "category": category,
-                    "model": model_name,
-                    "image_AUROC": image_auc,
-                    "pixel_AUROC": pixel_auc,
-                    "F1_Score": f1_score,
-                })
-                
-                print(f"{model_name} results:")
-                print(f"  Image AUROC: {image_auc}")
-                print(f"  Pixel AUROC: {pixel_auc}")
-                print(f"  F1 Score: {f1_score}")
+                # Clean up datamodule after each model
+                del datamodule
+                del test_loader
+                cleanup_gpu()
                 
             except Exception as e:
                 print(f"Error running {model_name} on {category}: {e}")
-                import traceback
                 traceback.print_exc()
-                rows.append({
-                    "category": category,
-                    "model": model_name,
-                    "image_AUROC": None,
-                    "pixel_AUROC": None,
-                    "F1_Score": None,
-                })
-                continue
+                results_collector.add_result(BenchmarkResult(
+                    category=category,
+                    model=model_name,
+                ))
     
-    # Compute global averages (excluding None values)
-    def safe_average(key):
-        values = [r[key] for r in rows if r[key] is not None and r["category"] != "AVERAGE"]
-        return sum(values) / len(values) if values else None
+    # Print summary and save results
+    results_collector.print_summary()
+    results_collector.save_csv(output_file, append=append)
+
+
+def main():
+    """Main entry point."""
+    args = parse_args()
     
-    avg_image_auc = safe_average("image_AUROC")
-    avg_pixel_auc = safe_average("pixel_AUROC")
-    avg_f1 = safe_average("F1_Score")
+    # Handle --list flag
+    if args.list:
+        list_options()
+        return
     
-    print("\n==========================")
-    print("GLOBAL AVERAGE METRICS")
-    print("==========================")
+    # Apply Windows symlink patch
+    patch_windows_symlink()
     
-    if avg_image_auc:
-        print(f"Average Image AUROC: {avg_image_auc:.4f}")
-    else:
-        print("Average Image AUROC: N/A")
+    # Determine categories and models to run
+    categories = args.category if args.category else CATEGORIES
+    models = args.model if args.model else MODEL_NAMES
     
-    if avg_pixel_auc:
-        print(f"Average Pixel AUROC: {avg_pixel_auc:.4f}")
-    else:
-        print("Average Pixel AUROC: N/A")
+    # Determine accelerator
+    accelerator = "cpu" if args.cpu else "auto"
     
-    if avg_f1:
-        print(f"Average F1 Score: {avg_f1:.4f}")
-    else:
-        print("Average F1 Score: N/A")
-    
-    # Append average row to CSV
-    rows.append({
-        "category": "AVERAGE",
-        "model": "ALL",
-        "image_AUROC": avg_image_auc,
-        "pixel_AUROC": avg_pixel_auc,
-        "F1_Score": avg_f1,
-    })
-    
-    # Save CSV
-    with open(CSV_OUTPUT, "w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=["category", "model", "image_AUROC", "pixel_AUROC", "F1_Score"])
-        writer.writeheader()
-        writer.writerows(rows)
-    
-    print(f"\nResults saved to: {CSV_OUTPUT}")
+    # Run testbench
+    run_testbench(
+        categories=categories,
+        models=models,
+        num_images=args.num_images,
+        output_file=args.output,
+        append=args.append,
+        accelerator=accelerator
+    )
+
 
 if __name__ == "__main__":
-    run_testbench()
+    main()

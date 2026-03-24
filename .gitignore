@@ -1,2 +1,11 @@
 venv/
 MVTecAD/
+.venv/
+__pycache__/
+*.pyc
+*.tar.xz
+pre_trained/
+results/
+anovenv/
+datasets/
+*.save
