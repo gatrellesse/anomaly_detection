@@ -1,0 +1,444 @@
+==== SLURM JOB INFO ====
+JobID: 14909
+Node: ensta-l40s02.r2.enst.fr
+GPUs: N/A
+========================
+Running train-together: mixed subset
+GPU detected: NVIDIA L40S
+================================================================================
+ANOMALY DETECTION TESTBENCH (TRAIN TOGETHER)
+================================================================================
+Train-together categories: bottle, cable, capsule, leather, wood
+Models: fastflow, draem, patchcore
+Test images per category: ALL
+Limit train images per category: NONE
+Output file: mvtec_tt_mixed5.csv
+Mode: Overwrite
+Accelerator: auto
+================================================================================
+
+========================================
+MODEL (train once): fastflow
+========================================
+MVTec AD dataset already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Training fastflow on concatenated TRAIN set...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor  │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator     │      0 │ train │     0 │
+│ 3 │ model          │ FastflowModel │  7.7 M │ train │     0 │
+│ 4 │ loss           │ FastflowLoss  │      0 │ train │     0 │
+└───┴────────────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 3.5 M                                                         
+Non-trainable params: 4.2 M                                                     
+Total params: 7.7 M                                                             
+Total estimated model params size (MB): 30                                      
+Modules in train mode: 267                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 1/1  ━━━━━━━━━━━━━━━━━ 36/36 0:00:39 • 0:00:00 0.93it/s train_loss_step:  
+                                                              -328710.875       
+                                                              train_loss_epoch: 
+                                                              -250228.641       
+  Training completed in 2m 6.22s
+
+--- Test category: bottle ---
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.970634937286377     │
+│       image_F1Score       │    0.9312977194786072     │
+│        pixel_AUROC        │    0.8407121300697327     │
+│       pixel_F1Score       │    0.33245474100112915    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:04 • 0:00:00 1.05it/s 
+
+--- Test category: cable ---
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.7468140721321106     │
+│       image_F1Score       │    0.7599999904632568     │
+│        pixel_AUROC        │    0.8790514469146729     │
+│       pixel_F1Score       │    0.3848099708557129     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:12 • 0:00:00 0.75it/s 
+
+--- Test category: capsule ---
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.7313522100448608     │
+│       image_F1Score       │    0.8715596199035645     │
+│        pixel_AUROC        │    0.9381232261657715     │
+│       pixel_F1Score       │    0.3501465320587158     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:12 • 0:00:00 0.62it/s 
+
+--- Test category: leather ---
+MVTec AD category 'leather' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.996942937374115     │
+│       image_F1Score       │    0.9533678889274597     │
+│        pixel_AUROC        │    0.9934871792793274     │
+│       pixel_F1Score       │    0.3509684205055237     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:07 • 0:00:00 0.91it/s 
+
+--- Test category: wood ---
+MVTec AD category 'wood' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │     0.974561333656311     │
+│       image_F1Score       │          0.9375           │
+│        pixel_AUROC        │    0.9275752305984497     │
+│       pixel_F1Score       │    0.4674753248691559     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:05 • 0:00:00 0.70it/s 
+
+========================================
+MODEL (train once): draem
+========================================
+  Using model-specific batch sizes: train=2, eval=2
+MVTec AD dataset already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Training draem on concatenated TRAIN set...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type                   ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor           │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor          │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator              │      0 │ train │     0 │
+│ 3 │ augmenter      │ PerlinAnomalyGenerator │      0 │ train │     0 │
+│ 4 │ model          │ DraemModel             │ 97.4 M │ train │     0 │
+│ 5 │ loss           │ DraemLoss              │      0 │ train │     0 │
+└───┴────────────────┴────────────────────────┴────────┴───────┴───────┘
+Trainable params: 97.4 M                                                        
+Non-trainable params: 0                                                         
+Total params: 97.4 M                                                            
+Total estimated model params size (MB): 389                                     
+Modules in train mode: 236                                                      
+Modules in eval mode: 0                                                         
+Total FLOPs: 0                                                                  
+Epoch 4/4  ━━━━━━━━━━━━━━━━ 572/572 0:01:17 • 0:00:00 7.35it/s train_loss_step: 
+                                                               0.304            
+                                                               train_loss_epoch:
+                                                               0.317            
+  Training completed in 8m 40.94s
+
+--- Test category: bottle ---
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            0.5            │
+│       image_F1Score       │    0.8630136847496033     │
+│        pixel_AUROC        │    0.30330684781074524    │
+│       pixel_F1Score       │    0.07215288281440735    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42/42 0:00:05 • 0:00:00 7.46it/s 
+
+--- Test category: cable ---
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            0.5            │
+│       image_F1Score       │    0.7603305578231812     │
+│        pixel_AUROC        │    0.5258747339248657     │
+│       pixel_F1Score       │    0.0713234692811966     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 75/75 0:00:13 • 0:00:00 5.43it/s 
+
+--- Test category: capsule ---
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.6868767142295837     │
+│       image_F1Score       │    0.9045643210411072     │
+│        pixel_AUROC        │    0.5509613156318665     │
+│       pixel_F1Score       │    0.05182420089840889    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 66/66 0:00:14 • 0:00:00 4.54it/s 
+
+--- Test category: leather ---
+MVTec AD category 'leather' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.8447690010070801     │
+│       image_F1Score       │    0.8518518805503845     │
+│        pixel_AUROC        │    0.7168347239494324     │
+│       pixel_F1Score       │    0.09068389981985092    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 62/62 0:00:09 • 0:00:00 6.61it/s 
+
+--- Test category: wood ---
+MVTec AD category 'wood' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9377192854881287     │
+│       image_F1Score       │    0.9333333373069763     │
+│        pixel_AUROC        │    0.7751625180244446     │
+│       pixel_F1Score       │    0.28547823429107666    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 40/40 0:00:07 • 0:00:00 5.15it/s 
+
+========================================
+MODEL (train once): patchcore
+========================================
+MVTec AD dataset already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+  Training patchcore on concatenated TRAIN set...
+┏━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name           ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ pre_processor  │ PreProcessor   │      0 │ train │     0 │
+│ 1 │ post_processor │ PostProcessor  │      0 │ train │     0 │
+│ 2 │ evaluator      │ Evaluator      │      0 │ train │     0 │
+│ 3 │ model          │ PatchcoreModel │ 24.9 M │ train │     0 │
+└───┴────────────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.9 M                                                        
+Non-trainable params: 0                                                         
+Total params: 24.9 M                                                            
+Total estimated model params size (MB): 99                                      
+Modules in train mode: 19                                                       
+Modules in eval mode: 174                                                       
+Total FLOPs: 0                                                                  
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 36/36 0:00:39 • 0:00:00 0.93it/s 
+  Training completed in 15m 32.14s
+
+--- Test category: bottle ---
+MVTec AD category 'bottle' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            1.0            │
+│       image_F1Score       │            1.0            │
+│        pixel_AUROC        │    0.9853325486183167     │
+│       pixel_F1Score       │    0.7157533168792725     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6/6 0:00:05 • 0:00:00 0.88it/s 
+
+--- Test category: cable ---
+MVTec AD category 'cable' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9930659532546997     │
+│       image_F1Score       │    0.7603305578231812     │
+│        pixel_AUROC        │    0.9834160804748535     │
+│       pixel_F1Score       │    0.6321686506271362     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10/10 0:00:14 • 0:00:00 0.64it/s 
+
+--- Test category: capsule ---
+MVTec AD category 'capsule' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9968089461326599     │
+│       image_F1Score       │    0.9813084006309509     │
+│        pixel_AUROC        │    0.9901716113090515     │
+│       pixel_F1Score       │    0.3978346884250641     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9/9 0:00:14 • 0:00:00 0.56it/s 
+
+--- Test category: leather ---
+MVTec AD category 'leather' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │            1.0            │
+│       image_F1Score       │            1.0            │
+│        pixel_AUROC        │    0.9922877550125122     │
+│       pixel_F1Score       │    0.36752355098724365    │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8/8 0:00:09 • 0:00:00 0.73it/s 
+
+--- Test category: wood ---
+MVTec AD category 'wood' already exists at /home/ensta/ensta-maria-fernanda.pereira/anomaly_detection/MVTecAD
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        Test metric        ┃       DataLoader 0        ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│        image_AUROC        │    0.9868420958518982     │
+│       image_F1Score       │    0.8759124279022217     │
+│        pixel_AUROC        │     0.931930661201477     │
+│       pixel_F1Score       │    0.4409542381763458     │
+└───────────────────────────┴───────────────────────────┘
+Testing ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5/5 0:00:07 • 0:00:00 0.58it/s 
+
+================================================================================
+BENCHMARK SUMMARY
+================================================================================
+
+bottle - fastflow:
+  Image AUROC: 0.9706
+  Pixel AUROC: 0.8407
+  F1 Score: 0.9313
+  Train Time: 2m 6.22s
+  Inference Time: 6.77s
+  Inference FPS: 12.25
+  Peak GPU Memory: 313.69 MB
+  Peak CPU Memory: 2.17 GB
+
+cable - fastflow:
+  Image AUROC: 0.7468
+  Pixel AUROC: 0.8791
+  F1 Score: 0.7600
+  Train Time: 2m 6.22s
+  Inference Time: 13.95s
+  Inference FPS: 10.75
+  Peak GPU Memory: 436.41 MB
+  Peak CPU Memory: 2.17 GB
+
+capsule - fastflow:
+  Image AUROC: 0.7314
+  Pixel AUROC: 0.9381
+  F1 Score: 0.8716
+  Train Time: 2m 6.22s
+  Inference Time: 14.80s
+  Inference FPS: 8.92
+  Peak GPU Memory: 389.23 MB
+  Peak CPU Memory: 2.17 GB
+
+leather - fastflow:
+  Image AUROC: 0.9969
+  Pixel AUROC: 0.9935
+  F1 Score: 0.9534
+  Train Time: 2m 6.22s
+  Inference Time: 9.91s
+  Inference FPS: 12.51
+  Peak GPU Memory: 369.86 MB
+  Peak CPU Memory: 2.17 GB
+
+wood - fastflow:
+  Image AUROC: 0.9746
+  Pixel AUROC: 0.9276
+  F1 Score: 0.9375
+  Train Time: 2m 6.22s
+  Inference Time: 8.47s
+  Inference FPS: 9.32
+  Peak GPU Memory: 317.31 MB
+  Peak CPU Memory: 2.17 GB
+
+bottle - draem:
+  Image AUROC: 0.5000
+  Pixel AUROC: 0.3033
+  F1 Score: 0.8630
+  Train Time: 8m 40.94s
+  Inference Time: 7.03s
+  Inference FPS: 11.80
+  Peak GPU Memory: 1.81 GB
+  Peak CPU Memory: 3.39 GB
+
+cable - draem:
+  Image AUROC: 0.5000
+  Pixel AUROC: 0.5259
+  F1 Score: 0.7603
+  Train Time: 8m 40.94s
+  Inference Time: 14.84s
+  Inference FPS: 10.11
+  Peak GPU Memory: 774.96 MB
+  Peak CPU Memory: 3.39 GB
+
+capsule - draem:
+  Image AUROC: 0.6869
+  Pixel AUROC: 0.5510
+  F1 Score: 0.9046
+  Train Time: 8m 40.94s
+  Inference Time: 15.49s
+  Inference FPS: 8.52
+  Peak GPU Memory: 725.20 MB
+  Peak CPU Memory: 3.40 GB
+
+leather - draem:
+  Image AUROC: 0.8448
+  Pixel AUROC: 0.7168
+  F1 Score: 0.8519
+  Train Time: 8m 40.94s
+  Inference Time: 10.34s
+  Inference FPS: 11.99
+  Peak GPU Memory: 720.32 MB
+  Peak CPU Memory: 3.39 GB
+
+wood - draem:
+  Image AUROC: 0.9377
+  Pixel AUROC: 0.7752
+  F1 Score: 0.9333
+  Train Time: 8m 40.94s
+  Inference Time: 8.67s
+  Inference FPS: 9.11
+  Peak GPU Memory: 720.32 MB
+  Peak CPU Memory: 3.39 GB
+
+bottle - patchcore:
+  Image AUROC: 1.0000
+  Pixel AUROC: 0.9853
+  F1 Score: 1.0000
+  Train Time: 15m 32.14s
+  Inference Time: 8.93s
+  Inference FPS: 9.30
+  Peak GPU Memory: 15.99 GB
+  Peak CPU Memory: 3.53 GB
+
+cable - patchcore:
+  Image AUROC: 0.9931
+  Pixel AUROC: 0.9834
+  F1 Score: 0.7603
+  Train Time: 15m 32.14s
+  Inference Time: 16.88s
+  Inference FPS: 8.89
+  Peak GPU Memory: 15.23 GB
+  Peak CPU Memory: 3.54 GB
+
+capsule - patchcore:
+  Image AUROC: 0.9968
+  Pixel AUROC: 0.9902
+  F1 Score: 0.9813
+  Train Time: 15m 32.14s
+  Inference Time: 17.22s
+  Inference FPS: 7.66
+  Peak GPU Memory: 15.23 GB
+  Peak CPU Memory: 3.54 GB
+
+leather - patchcore:
+  Image AUROC: 1.0000
+  Pixel AUROC: 0.9923
+  F1 Score: 1.0000
+  Train Time: 15m 32.14s
+  Inference Time: 12.71s
+  Inference FPS: 9.76
+  Peak GPU Memory: 15.23 GB
+  Peak CPU Memory: 3.54 GB
+
+wood - patchcore:
+  Image AUROC: 0.9868
+  Pixel AUROC: 0.9319
+  F1 Score: 0.8759
+  Train Time: 15m 32.14s
+  Inference Time: 10.43s
+  Inference FPS: 7.57
+  Peak GPU Memory: 15.23 GB
+  Peak CPU Memory: 3.54 GB
+
+================================================================================
+GLOBAL AVERAGES
+================================================================================
+  Average Image AUROC: 0.8578
+  Average Pixel AUROC: 0.8223
+  Average F1 Score: 0.8923
+  Average Train Time: 8m 46.43s
+  Average Inference Time: 11.76s
+  Average Inference FPS: 9.90
+  Average Peak GPU Memory: 5.56 GB
+  Average Peak CPU Memory: 3.03 GB
+Done.

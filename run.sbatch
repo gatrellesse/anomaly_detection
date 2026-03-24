@@ -49,20 +49,20 @@ source venv/bin/activate
 
 # echo "Done."
 
-# echo "Running train-together: objects only"
-# python testbench.py \
-#   --train-together \
-#   --category bottle cable capsule hazelnut metal_nut pill screw toothbrush transistor zipper \
-#   --model fastflow draem patchcore \
-#   --output mvtec_tt_objects.csv
-
-# echo "Done."
-
-echo "Running train-together: mixed subset"
+echo "Running train-together: objects only"
 python testbench.py \
   --train-together \
-  --category bottle cable capsule leather wood \
+  --category bottle cable capsule hazelnut metal_nut pill screw toothbrush transistor zipper \
   --model fastflow draem patchcore \
-  --output mvtec_tt_mixed5.csv
+  --output mvtec_tt_objects.csv
 
 echo "Done."
+
+# echo "Running train-together: mixed subset"
+# python testbench.py \
+#   --train-together \
+#   --category bottle cable capsule leather wood \
+#   --model fastflow draem patchcore \
+#   --output mvtec_tt_mixed5.csv
+
+# echo "Done."
