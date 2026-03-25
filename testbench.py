@@ -30,13 +30,13 @@ from config import (
     LIMIT_TEST_IMAGES, BATCH_SIZE_TRAIN, BATCH_SIZE_EVAL, CSV_OUTPUT,
     MODEL_BATCH_SIZES, MODEL_EPOCHS
 )
-from models import get_model
-from data_utils import load_mvtec_category
-from metrics_utils import (
+from utils.models import get_model
+from utils.data_utils import load_mvtec_category
+from utils.metrics_utils import (
     PerformanceTracker, extract_model_metrics,
     format_time, format_memory
 )
-from results import BenchmarkResult, ResultsCollector
+from results.results import BenchmarkResult, ResultsCollector
 
 torch.backends.cuda.matmul.allow_tf32 = True
 torch.set_float32_matmul_precision("high")

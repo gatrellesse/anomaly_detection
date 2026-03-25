@@ -44,7 +44,7 @@ BATCH_SIZE_EVAL = 16
 
 # Model-specific batch sizes for memory-intensive models
 MODEL_BATCH_SIZES = {
-    "dinomaly": {"train": 4, "eval": 8},  # Large transformer model needs smaller batches
+    "dinomaly": {"train": 4, "eval": 8},
     "vlmad": {"train": 8, "eval": 16},
     "winclip": {"train": 8, "eval": 16},
     "draem": {"train": 2, "eval": 2},
