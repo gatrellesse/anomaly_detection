@@ -2,14 +2,14 @@
 
 This repository contains a script to benchmark anomaly detection models on the MVTec AD dataset.
 
-## ?? Overview
+## Overview
 
 - `testbench.py`: main entrypoint.
 - `config.py`: default dataset path, categories, models, and training settings.
 - `utils/`: model loading, dataloaderutils, metrics tracking.
 - `results/`: result classes and plotting helpers.
 
-## ?? Requirements
+## Requirements
 
 Install dependencies:
 
@@ -17,7 +17,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-## ?? Usage
+## Usage
 
 Run all categories/models:
 
@@ -57,14 +57,14 @@ Options:
 - `--append` keep appending to CSV.
 - `--cpu` force CPU-only run.
 
-## ?? Output
+## Output
 
 Results are written to CSV (default path from `config.py`), may include:
 - Image AUROC, pixel AUROC, F1
 - train/inference time, FPS
 - memory usage
 
-## ?? References
+## References
 
 - MVTec dataset: https://www.mvtec.com/company/research/datasets/mvtec-ad/
 - anomalib: https://github.com/openvinotoolkit/anomalib
