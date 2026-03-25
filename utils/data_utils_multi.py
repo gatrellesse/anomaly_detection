@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 from torch.utils.data import ConcatDataset, DataLoader, Subset
 from anomalib.data import MVTecAD
 
-from data_utils import download_mvtec_ad
+from utils.data_utils import download_mvtec_ad
 
 
 class MultiCategoryMVTecAD:
