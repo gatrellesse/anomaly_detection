@@ -31,7 +31,6 @@ This project provides a standardized evaluation pipeline for multiple anomaly de
 2. Install dependencies:
    ```bash
    pip install -r requirements.txt
-   pip install -r anomalib/requirements.txt
    ```
 
 ## Usage
